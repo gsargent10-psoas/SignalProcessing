@@ -1,5 +1,6 @@
 #include "signalprocessing.h"
 #include<math.h>
+#include<stdlib.h>
 
 /* Internal Functions */
 double min(double* img, int size)
@@ -57,7 +58,8 @@ double std(double* img, int size)
 
 /* External Functions */ 
 // type: 0=minmax; 1=statistical; 2=absolute.
-void imgscale(double* img, int size, double param1, double param2, int type)
+// return: 0=no error; 1=type not found;
+int imgscale(double* img, int size, double param1, double param2, int type)
 {
 	double alpha_l, alpha_h, mu, sd;
 	if (type==0)
@@ -72,10 +74,15 @@ void imgscale(double* img, int size, double param1, double param2, int type)
 		alpha_l = mu - param1*sd;
 		alpha_h = mu + param2*sd;
 	}
-	else
+	else if (type==2)
 	{
 		alpha_l = param1;
 		alpha_h = param2;
+	}
+	else
+	{
+		// type not found
+		return 1;
 	}
 	double div = (alpha_h-alpha_l);
 	div = div == 0.0 ? 0.0001 : div;
@@ -85,12 +92,67 @@ void imgscale(double* img, int size, double param1, double param2, int type)
 		img[k] = img[k] > alpha_h ? alpha_h : img[k];
 		img[k] = (img[k] - alpha_l)/(div); // [0,1]
 	}
+	return 0;
 }
 
-void kmeans(double* in, double* out, int size)
+// size = x*y, where in is a 2d array of points and out is the classification for each point.
+// return: 0=no error; 1=k invalid; 2=invalid iterations;
+int kmeans(double* in, double* out, int size, int k, int iterations)
 {
+	// Step-1: Select value of k, to decide number of clusters to be formed.
+	if (k < 1 || k > size/2)
+	{
+		// number of clusters needs to be greater than zero and less than total size
+		return 1;
+	}
+	if (iterations < 1)
+	{
+		// number of iterations needs to be greater than zero
+		return 2;
+	}
+	
+	// Step-2: Select random k points, which will act as centroids.
+	double* clusters = (double*) malloc(k*2*sizeof(double));
+	int num_points = size/2;
+	int delta = num_points/k;
+	int index = 0;
+	for (int z=0;z<k;z++)
+	{
+		clusters[index] = in[index];
+		clusters[index+k] = in[index+num_points];
+		index = index + delta;
+	}
+	
+	// Step 3: Assign each data point, based on their distance from the centroids,
+	//		   to the nearest/closest centroid.
+	double in_x,in_y,c_x,c_y,new_cx,new_cy;
+	for (int it=0;it<iterations;it++)
+	{
+		for (int z=0;z<num_points;z++)
+		{
+			in_x = in[z];
+			in_y = in[z+num_points];
+		}
+	
+		// Step-4: Recompute centroid of each cluster.
+		for (int z=0;z<num_points;z++)
+		{
+			for (int c=0;c<k;c++)
+			{
+				if (out[z] == c)
+				{
+					
+				}
+			}
+		}
+		// Step-5: Reassign each data point.
+		// End: If no reassignment occurs or max number of iterations reach, end.
+	}
+	free(clusters);
+	return 0;
 }
 
-void knn(double* in, double* out, int size, int k)
+int knn(double* in, double* out, int size, int k)
 {
+	// future implementation
 }
