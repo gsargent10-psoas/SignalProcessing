@@ -1,3 +1,4 @@
+#include "signalprocessing.h"
 #include<math.h>
 
 /* Internal Functions */
@@ -9,7 +10,7 @@ double min(double* img, int size)
 	{
 		return min;
 	}
-	for(k=1;k<size;k++)
+	for(int k=1;k<size;k++)
 	{
 		current=img[k];
 		min = min < current ? min : current;
@@ -25,7 +26,7 @@ double max(double* img, int size)
 	{
 		return max;
 	}
-	for(k=1;k<size;k++)
+	for(int k=1;k<size;k++)
 	{
 		current=img[k];
 		max = max > current ? max : current;
@@ -36,7 +37,7 @@ double max(double* img, int size)
 double mean(double* img, int size)
 {
 	double total = 0.0;
-	for(k=0;k<size;k++)
+	for(int k=0;k<size;k++)
 	{
 		total = total + img[k];
 	}
@@ -47,9 +48,9 @@ double std(double* img, int size)
 {
 	double mu = mean(img,size);
 	double sum = 0.0;
-	for(k=0;k<size;k++)
+	for(int k=0;k<size;k++)
 	{
-		sum = sum + pow(abs((img[k]-mu)),2);
+		sum = sum + pow(fabs((img[k]-mu)),2);
 	}
 	return sqrt(sum/size);
 }
@@ -58,6 +59,7 @@ double std(double* img, int size)
 // type: 0=minmax; 1=statistical; 2=absolute.
 void imgscale(double* img, int size, double param1, double param2, int type)
 {
+	double alpha_l, alpha_h, mu, sd;
 	if (type==0)
 	{
 		alpha_l = min(img,size);
@@ -77,10 +79,11 @@ void imgscale(double* img, int size, double param1, double param2, int type)
 	}
 	double div = (alpha_h-alpha_l);
 	div = div == 0.0 ? 0.0001 : div;
-	for(k=0;k<size;k++)
+	for(int k=0;k<size;k++)
 	{
 		img[k] = img[k] < alpha_l ? alpha_l : img[k];
 		img[k] = img[k] > alpha_h ? alpha_h : img[k];
 		img[k] = (img[k] - alpha_l)/(div); // [0,1]
 	}
 }
+
