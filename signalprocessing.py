@@ -9,7 +9,7 @@ class SignalProcessing:
         self.kmeans = self.lib.kmeans
         
         # void imgscale(double* img, int size, double param1, double param2, int type);
-        self.imgscale.restype = None
+        self.imgscale.restype = ctypes.c_int
         self.imgscale.argtypes = [ndpointer(ctypes.c_double, flags="C_Contiguous"),ctypes.c_int,ctypes.c_double,ctypes.c_int]
         
         # size = x+y, where in is a 2d array of points and out is the classification for each point.
