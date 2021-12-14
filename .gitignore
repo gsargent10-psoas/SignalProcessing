@@ -54,3 +54,5 @@ dkms.conf
 __pycache__
 
 path.txt
+
+test
