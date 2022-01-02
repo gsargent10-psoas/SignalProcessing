@@ -2,6 +2,9 @@
 #include<math.h>
 #include<stdlib.h>
 
+/*** Global Variables ***/
+
+
 /*** Internal Functions ***/
 
 double min(double* img, int size)
@@ -222,6 +225,7 @@ int kmeans(double* in, int* out, int size, int k, int iterations)
 	return it;
 }
 
+/* not implemented */
 int knn(double* in, double* out, int size, int k)
 {
 	// future implementation
