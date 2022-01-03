@@ -1,9 +1,0 @@
-PIFILE
-width = 10
-height = 10
-frames = 3
-data type = 5
-byte order = 1
-product type = intensity
-sensor type = Division of Focal Plane
-sensor name = PIRATE I

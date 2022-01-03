@@ -11,7 +11,9 @@ class PIWrapper:
         self.openpiread = self.lib.openpiread
         self.getwidth = self.lib.getwidth
         self.getheight = self.lib.getheight
+        self.readpi = self.lib.readpi
         self.closereader = self.lib.closereader
+        print(self.lib)
         
         # bool openpiwriter(const char *filename, int width, int height, int type, bool overwrite);
         self.openpiwriter.restype = ctypes.c_int
@@ -36,6 +38,10 @@ class PIWrapper:
         # int getheight();
         self.getheight.restype = ctypes.c_int
         self.getheight.argtypes = None
+        
+        # int int readpi(double *out, int width, int height, int index);
+        self.readpi.restype = ctypes.c_int
+        self.readpi.argtypes = [ndpointer(ctypes.c_double, flags="C_Contiguous"),ctypes.c_int,ctypes.c_int,ctypes.c_int]
         
         # int closereader();
         self.closereader.restype = ctypes.c_int
