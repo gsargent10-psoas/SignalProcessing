@@ -1,11 +1,11 @@
 /*** PI File IO ***/
 
-extern "C" int openpiread(char *filename);
+extern "C" bool openpiread(char *filename);
 
 extern "C" int openpiwriter(char *filename, int width, int height, int type, bool overwrite);
 
 /* return: 0=no error; -1=width, height, and/or frame number are incorrect; */ 
-extern "C" int readpi(double *data, int index);
+extern "C" int readpi(double *out, int index);
 
 extern "C" int closereader();
 
