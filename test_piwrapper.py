@@ -16,16 +16,13 @@ for x in range(10):
 filename = './test.pi'
 filename = filename.encode('utf-8')
 ret = pw.openpiwriter(ctypes.c_char_p(filename),10,10,4,True)
-print('openpiwriter() return:')
-print(ret)
+print('openpiwriter() return:',ret)
 ret = pw.writepi(np.double(a),1)
 ret = pw.writepi(np.double(a),1)
 ret = pw.writepi(np.double(a),1)
-print('writepi() return:')
-print(ret)
+print('writepi() return:',ret)
 ret = pw.closewriter()
-print('closewriter() return:')
-print(ret)
+print('closewriter() return:',ret)
 
 #filename = './Ground_truth_Stokes_005.pi'
 #filename = filename.encode('utf-8')

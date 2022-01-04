@@ -12,9 +12,7 @@ static CPReader reader;
 
 bool openpiread(char *filename)
 {
-	cout << reader.getImageWidth() << endl;
 	std::string cpp_filename((const char*) filename);
-	cout << filename << endl;
 	return reader.openFile(cpp_filename, PI_FILE_FORMAT::PIFILE);
 }
 
