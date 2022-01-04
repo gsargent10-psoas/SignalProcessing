@@ -57,5 +57,6 @@ path.txt
 
 test
 
-*.pi*
-*.hdr
+*.pi
+*.pi.hdr
+*.swp
