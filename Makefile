@@ -1,4 +1,4 @@
-test: signalprocessing.so test_signalprocessing.c test_piwrapper.cpp piwrapper.so
+test: signalprocessing.so test_signalprocessing.c test_piwrapper.cpp piwrapper.so polarimetric.so
 	gcc -o test_signalprocessing test_signalprocessing.c -lm -L./ -lsignalprocessing
 	g++ -o test_piwrapper test_piwrapper.cpp -L./ -lpiwrapper -fPIC
 polarimetric.so: polarimetric.o
@@ -14,4 +14,4 @@ signalprocessing.o: signalprocessing.c signalprocessing.h
 polarimetric.o: polarimetric.c polarimetric.h
 	gcc -c polarimetric.c
 clean:
-	rm test_signalprocessing test_piwrapper libsignalprocessing.so libpiwrapper.so *.o
+	rm test_signalprocessing test_piwrapper libsignalprocessing.so libpiwrapper.so libpolarimetric.so *.o
