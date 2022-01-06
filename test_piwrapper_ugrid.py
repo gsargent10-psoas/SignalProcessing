@@ -72,7 +72,7 @@ if __name__ == '__main__' :
     s1 = np.empty([pw.getheight(),pw.getwidth()])
     s2 = np.empty([pw.getheight(),pw.getwidth()])
     ugrid = np.empty([pw.getheight(),pw.getwidth()])
-    print('closereader() return:',ret)
+    I45 = np.empty([pw.getheight(),pw.getwidth()])
     h,w = s0.shape
     ret = pw.readpi(s0,w,h,0);
     print('readpi() return:',ret)
@@ -81,15 +81,20 @@ if __name__ == '__main__' :
     ret = pw.readpi(s2,w,h,2);
     print('readpi() return:',ret)
     ret = pw.closereader()
-    ret = p.formugrid(s0,s1,s2,ugrid,w,h,0)
+    print('closereader() return:',ret)
+    ret = p.formugrid(s0,s1,s2,ugrid,w,h,3)
     print('formugrid() return:',ret)
+    p.computeintensity(s0,s1,s2,I45,w,h,45.0)
     
     print('max s0',s0.max(),'min s0',s0.min())
     print('max ugrid',ugrid.max(),'min ugrid',ugrid.min())
+    print('max I45',I45.max(),'min I45',I45.min())
     sp.imgscale(np.double(s0),h*w,0,0,0)
     sp.imgscale(np.double(ugrid),h*w,0,0,0)
+    sp.imgscale(np.double(I45),h*w,0,0,0)
     print('max s0 scaled',s0.max(),'min s0 scaled',s0.min())
     print('max ugrid scaled',ugrid.max(),'min ugrid scaled',ugrid.min())
+    print('max I45 scaled',I45.max(),'min I45 scaled',I45.min())
     s0_fig = plt.figure()
     plt.imshow(s0,cmap='gray')
     plt.title("s0")
@@ -98,6 +103,20 @@ if __name__ == '__main__' :
     plt.imshow(ugrid,cmap='gray')
     plt.title("ugrid")
     ugrid_fig.canvas.flush_events()
+    I45_fig = plt.figure()
+    plt.imshow(I45,cmap='gray')
+    plt.title("I45")
+    I45_fig.canvas.flush_events()
+
+    a = np.zeros([2,2])
+    b = np.ones([2,2])
+    e = np.ones([2,2])*2
+    c = np.stack((a,b,e),-1)
+    print(c[:,:,0])
+    print(c[:,:,1])
+    print(c[:,:,2])
+    print(c.shape)
+
 
     input("press any key to end script")
 

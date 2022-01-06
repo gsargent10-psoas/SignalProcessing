@@ -147,7 +147,7 @@ int CPIFile::readPIHeaderFile(std::string& filename){
 	//Validate key-value pairs and add to PIFile object
 	for (size_t k = 0; k < kvpairs.size(); k++){
 		if (kvpairs[k].key.length()>0 && kvpairs[k].value.length() > 0){
-			cout << kvpairs[k].key << "--->" << kvpairs[k].value << "\n";
+			//cout << kvpairs[k].key << "--->" << kvpairs[k].value << "\n";
 			if (!addPIParameter(kvpairs[k].key, kvpairs[k].value)) return -4;
 		}
 	}
