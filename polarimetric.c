@@ -105,7 +105,7 @@ int formugrid(double *s0, double *s1, double *s2, double *out_data, int width, i
 /* input: in_data= ; out_data=height by width with depth of 5 (so,s1,s2,dolp,aop) */
 void computeintensity(double *s0,double *s1, double *s2, double *out_data, int width, int height, double angle)
 {
-	angle = 2.0*angle/(M_PI/180.0);
+	angle = 2.0*angle*(M_PI/180.0);
 	for(int k=0;k<height*width;k++)
 	{
 		out_data[k] = 0.5*(s0[k]+cos(angle)*s1[k] + sin(angle)*s2[k]); 	
