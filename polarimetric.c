@@ -19,16 +19,16 @@ int formugrid(double *s0, double *s1, double *s2, double *out_data, int width, i
 	double a42[8] = {0.0,45.0,90.0,135.0,90.0,135.0,0.0,45.0};
 	for(int k=0;k<4;k++)
 	{
-		a22a[k]=2.0*a22a[k]/(M_PI/180.0);
-		a22b[k]=2.0*a22b[k]/(M_PI/180.0);
+		a22a[k]=2.0*a22a[k]*(M_PI/180.0);
+		a22b[k]=2.0*a22b[k]*(M_PI/180.0);
 	}
 	for(int k=0;k<6;k++)
 	{
-		a32[k]=2.0*a32[k]/(M_PI/180.0);
+		a32[k]=2.0*a32[k]*(M_PI/180.0);
 	}
 	for(int k=0;k<8;k++)
 	{
-		a42[k]=2.0*a42[k]/(M_PI/180.0);
+		a42[k]=2.0*a42[k]*(M_PI/180.0);
 	}
 	
 	int indx=0;	
@@ -61,17 +61,17 @@ int formugrid(double *s0, double *s1, double *s2, double *out_data, int width, i
 			}
 			else if(modulation==2) // 3x2
 			{
-				if(r%2==1 && c%3==1)
+				if(r%2==1 && c%3==1) // 150, bottom-right
 					out_data[indx] = 0.5*(s0[indx]+cos(a32[5])*s1[indx] + sin(a32[5])*s2[indx]); 	
-				if(r%2==1 && c%3==2)
+				if(r%2==1 && c%3==2) // 30, bottom-middle
 					out_data[indx] = 0.5*(s0[indx]+cos(a32[4])*s1[indx] + sin(a32[4])*s2[indx]); 	
-				if(r%2==1 && c%3==0)
+				if(r%2==1 && c%3==0) // 90, bottom-left
 					out_data[indx] = 0.5*(s0[indx]+cos(a32[3])*s1[indx] + sin(a32[3])*s2[indx]); 	
-				if(r%2==0 && c%3==1)
+				if(r%2==0 && c%3==1) // 60, top-right
 					out_data[indx] = 0.5*(s0[indx]+cos(a32[2])*s1[indx] + sin(a32[2])*s2[indx]); 	
-				if(r%2==0 && c%3==2)
+				if(r%2==0 && c%3==2) // 120, top-middle
 					out_data[indx] = 0.5*(s0[indx]+cos(a32[1])*s1[indx] + sin(a32[1])*s2[indx]); 	
-				if(r%2==0 && c%3==0)
+				if(r%2==0 && c%3==0) // 0, top-left
 					out_data[indx] = 0.5*(s0[indx]+cos(a32[0])*s1[indx] + sin(a32[0])*s2[indx]); 	
 			}
 			else if(modulation==3) // 4x2

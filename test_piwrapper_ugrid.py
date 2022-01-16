@@ -59,7 +59,7 @@ def getStokesImage(path,img_name,var_name) :
 
 if __name__ == '__main__' :
     plt.ion()
-    filename = '../../Data/Ground_truth_Stokes_001.pi'
+    filename = '../../Data/Ground_truth_Stokes_020.pi'
     filename = filename.encode('utf-8')
     pw = PIWrapper(lib_path='./libpiwrapper.so')
     sp = SignalProcessing(lib_path='./libsignalprocessing.so')
@@ -72,10 +72,12 @@ if __name__ == '__main__' :
     s1 = np.empty([pw.getheight(),pw.getwidth()],np.double)
     s2 = np.empty([pw.getheight(),pw.getwidth()],np.double)
     ugrid = np.empty([pw.getheight(),pw.getwidth()],np.double)
-    I22_5 = np.empty([pw.getheight(),pw.getwidth()],np.double)
-    I67_5 = np.empty([pw.getheight(),pw.getwidth()],np.double)
-    I112_5 = np.empty([pw.getheight(),pw.getwidth()],np.double)
-    I157_5 = np.empty([pw.getheight(),pw.getwidth()],np.double)
+    I0 = np.empty([pw.getheight(),pw.getwidth()],np.double)
+    I30 = np.empty([pw.getheight(),pw.getwidth()],np.double)
+    I60 = np.empty([pw.getheight(),pw.getwidth()],np.double)
+    I90 = np.empty([pw.getheight(),pw.getwidth()],np.double)
+    I120 = np.empty([pw.getheight(),pw.getwidth()],np.double)
+    I150 = np.empty([pw.getheight(),pw.getwidth()],np.double)
     h,w = s0.shape
     ret = pw.readpi(s0,w,h,0);
     print('readpi() return:',ret)
@@ -85,21 +87,26 @@ if __name__ == '__main__' :
     print('readpi() return:',ret)
     ret = pw.closereader()
     print('closereader() return:',ret)
-    ret = p.formugrid(s0,s1,s2,ugrid,w,h,1)
+    ret = p.formugrid(s0,s1,s2,ugrid,w,h,2)
+    print('ugrid min',ugrid.min(),'ugrid max',ugrid.max())
     print('formugrid() return:',ret)
-    p.computeintensity(s0,s1,s2,I22_5,w,h,22.5)
-    p.computeintensity(s0,s1,s2,I67_5,w,h,67.5)
-    p.computeintensity(s0,s1,s2,I112_5,w,h,112.5)
-    p.computeintensity(s0,s1,s2,I157_5,w,h,157.5)
+    p.computeintensity(s0,s1,s2,I0,w,h,0.0)
+    p.computeintensity(s0,s1,s2,I30,w,h,30.0)
+    p.computeintensity(s0,s1,s2,I60,w,h,60.0)
+    p.computeintensity(s0,s1,s2,I90,w,h,90.0)
+    p.computeintensity(s0,s1,s2,I120,w,h,120.0)
+    p.computeintensity(s0,s1,s2,I150,w,h,150.0)
 
     filename = './intesity.pi'
     filename = filename.encode('utf-8')
     ret = pw.openpiwriter(ctypes.c_char_p(filename),w,h,3,True)
     print('openpiwriter() return:',ret)
-    ret = pw.writepi(np.double(I22_5),1)
-    ret = pw.writepi(np.double(I67_5),1)
-    ret = pw.writepi(np.double(I112_5),1)
-    ret = pw.writepi(np.double(I157_5),1)
+    ret = pw.writepi(np.double(I0),1)
+    ret = pw.writepi(np.double(I30),1)
+    ret = pw.writepi(np.double(I60),1)
+    ret = pw.writepi(np.double(I90),1)
+    ret = pw.writepi(np.double(I120),1)
+    ret = pw.writepi(np.double(I150),1)
     print('writepi() return:',ret)
     ret = pw.closewriter()
     print('closewriter() return:',ret)
@@ -113,9 +120,9 @@ if __name__ == '__main__' :
     ret = pw.closewriter()
     print('closewriter() return:',ret)
 
-    s0 = (1/2)*(I22_5 + I112_5 + I67_5 + I157_5)
-    s1 = (np.sqrt(2.0)/2.0)*(I22_5 - I112_5 + I157_5 - I67_5)
-    s2 = (np.sqrt(2.0)/2.0)*(I22_5 - I112_5 + I67_5 - I157_5)
+    s0 = (1/3)*(I0 + I30 + I60 + I90+ I120 + I150)
+    s1 = (1/3)*((I0 - I90) + 2*(I30 - I60) + 2*(I150 - I120))
+    s2 = (np.sqrt(3.0)/3.0)*(I30 + I60 - I120 - I150)
 
     filename = './stokes.pi'
     filename = filename.encode('utf-8')
