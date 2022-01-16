@@ -61,36 +61,36 @@ int formugrid(double *s0, double *s1, double *s2, double *out_data, int width, i
 			}
 			else if(modulation==2) // 3x2
 			{
-				if(r%2==1 && c%3==1) // 150, bottom-right
-					out_data[indx] = 0.5*(s0[indx]+cos(a32[5])*s1[indx] + sin(a32[5])*s2[indx]); 	
-				if(r%2==1 && c%3==2) // 30, bottom-middle
-					out_data[indx] = 0.5*(s0[indx]+cos(a32[4])*s1[indx] + sin(a32[4])*s2[indx]); 	
+				if(r%2==1 && c%3==1) // 30, bottom-right
+					out_data[indx] = 0.5*(s0[indx]+cos(a32[4])*s1[indx] + sin(a32[5])*s2[indx]); 	
+				if(r%2==1 && c%3==2) // 150, bottom-middle
+					out_data[indx] = 0.5*(s0[indx]+cos(a32[5])*s1[indx] + sin(a32[4])*s2[indx]); 	
 				if(r%2==1 && c%3==0) // 90, bottom-left
 					out_data[indx] = 0.5*(s0[indx]+cos(a32[3])*s1[indx] + sin(a32[3])*s2[indx]); 	
-				if(r%2==0 && c%3==1) // 60, top-right
-					out_data[indx] = 0.5*(s0[indx]+cos(a32[2])*s1[indx] + sin(a32[2])*s2[indx]); 	
-				if(r%2==0 && c%3==2) // 120, top-middle
-					out_data[indx] = 0.5*(s0[indx]+cos(a32[1])*s1[indx] + sin(a32[1])*s2[indx]); 	
+				if(r%2==0 && c%3==1) // 120, top-right
+					out_data[indx] = 0.5*(s0[indx]+cos(a32[1])*s1[indx] + sin(a32[2])*s2[indx]); 	
+				if(r%2==0 && c%3==2) // 60, top-middle
+					out_data[indx] = 0.5*(s0[indx]+cos(a32[2])*s1[indx] + sin(a32[1])*s2[indx]); 	
 				if(r%2==0 && c%3==0) // 0, top-left
 					out_data[indx] = 0.5*(s0[indx]+cos(a32[0])*s1[indx] + sin(a32[0])*s2[indx]); 	
 			}
 			else if(modulation==3) // 4x2
 			{
-				if(r%2==1 && c%4==1)
-					out_data[indx] = 0.5*(s0[indx]+cos(a42[7])*s1[indx] + sin(a42[7])*s2[indx]); 	
-				if(r%2==1 && c%4==2)
+				if(r%2==1 && c%4==1) // 135, bottom-middle-left
+					out_data[indx] = 0.5*(s0[indx]+cos(a42[5])*s1[indx] + sin(a42[7])*s2[indx]); 	
+				if(r%2==1 && c%4==2) // 0, bottom-middle-right
 					out_data[indx] = 0.5*(s0[indx]+cos(a42[6])*s1[indx] + sin(a42[6])*s2[indx]); 	
-				if(r%2==1 && c%4==3)
-					out_data[indx] = 0.5*(s0[indx]+cos(a42[5])*s1[indx] + sin(a42[5])*s2[indx]); 	
-				if(r%2==1 && c%4==0)
+				if(r%2==1 && c%4==3) // 45, bottom-right
+					out_data[indx] = 0.5*(s0[indx]+cos(a42[7])*s1[indx] + sin(a42[5])*s2[indx]); 	
+				if(r%2==1 && c%4==0) // 90, bottom-left
 					out_data[indx] = 0.5*(s0[indx]+cos(a42[4])*s1[indx] + sin(a42[4])*s2[indx]); 	
-				if(r%2==0 && c%4==1)
-					out_data[indx] = 0.5*(s0[indx]+cos(a42[3])*s1[indx] + sin(a42[3])*s2[indx]); 	
-				if(r%2==0 && c%4==2)
+				if(r%2==0 && c%4==1) // 45, top-middle-left
+					out_data[indx] = 0.5*(s0[indx]+cos(a42[1])*s1[indx] + sin(a42[3])*s2[indx]); 	
+				if(r%2==0 && c%4==2) // 90, top-middle-right
 					out_data[indx] = 0.5*(s0[indx]+cos(a42[2])*s1[indx] + sin(a42[2])*s2[indx]); 	
-				if(r%2==0 && c%4==3)
-					out_data[indx] = 0.5*(s0[indx]+cos(a42[1])*s1[indx] + sin(a42[1])*s2[indx]); 	
-				if(r%2==0 && c%4==0)
+				if(r%2==0 && c%4==3) // 135, top-right
+					out_data[indx] = 0.5*(s0[indx]+cos(a42[3])*s1[indx] + sin(a42[1])*s2[indx]); 	
+				if(r%2==0 && c%4==0) // 0.0, top-left
 					out_data[indx] = 0.5*(s0[indx]+cos(a42[0])*s1[indx] + sin(a42[0])*s2[indx]); 	
 			}
 			else
