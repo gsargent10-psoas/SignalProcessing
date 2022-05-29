@@ -79,11 +79,11 @@ if __name__ == '__main__' :
     I120 = np.empty([pw.getheight(),pw.getwidth()],np.double)
     I150 = np.empty([pw.getheight(),pw.getwidth()],np.double)
     h,w = s0.shape
-    ret = pw.readpi(s0,w,h,0);
+    ret = pw.readpi(s0,w,h,0)
     print('readpi() return:',ret)
-    ret = pw.readpi(s1,w,h,1);
+    ret = pw.readpi(s1,w,h,1)
     print('readpi() return:',ret)
-    ret = pw.readpi(s2,w,h,2);
+    ret = pw.readpi(s2,w,h,2)
     print('readpi() return:',ret)
     ret = pw.closereader()
     print('closereader() return:',ret)
