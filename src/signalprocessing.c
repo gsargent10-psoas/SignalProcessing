@@ -230,9 +230,3 @@ int kmeans(double* in, int* out, int size, int k, int iterations)
 	free(centroid_count);
 	return it;
 }
-
-/* not implemented */
-int knn(double* in, double* out, int size, int k)
-{
-	// future implementation
-}
