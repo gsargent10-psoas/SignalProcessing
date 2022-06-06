@@ -7,6 +7,7 @@
 
 /*** Internal Functions ***/
 
+/* Min value of an array. */
 double min(double* img, int size)
 {
 	double current=img[0];
@@ -23,6 +24,7 @@ double min(double* img, int size)
 	return min;
 }
 
+/* Max value of an array. */
 double max(double* img, int size)
 {
 	double current=img[0];
@@ -39,6 +41,7 @@ double max(double* img, int size)
 	return max;
 }
 
+/* Mean value of an array. */
 double mean(double* img, int size)
 {
 	double total = 0.0;
@@ -49,6 +52,7 @@ double mean(double* img, int size)
 	return total/size;
 }
 
+/* Standard deviation of an array. */
 double std(double* img, int size)
 {
 	double mu = mean(img,size);
@@ -62,8 +66,9 @@ double std(double* img, int size)
 
 /*** External Functions ***/ 
 
-/* type: 0=minmax; 1=statistical; 2=absolute.
-   return: 0=no error; 1=type not found; */
+/* Scale in array in the range of [0,1].
+type: 0=minmax; 1=statistical; 2=absolute.
+return: 0=no error; 1=type not found; */
 int imgscale(double* img, int size, double param1, double param2, int type)
 {
 	double alpha_l, alpha_h, mu, sd;
@@ -100,8 +105,9 @@ int imgscale(double* img, int size, double param1, double param2, int type)
 	return 0;
 }
 
-/* size = x+y, where in is a 2d array of points and out is the classification for each point.
-   return: 0>=number of iterations; -1=k invalid; -2=invalid iterations; */
+/* Perform kmeans clustering with k++ initialization on an array.
+size = x+y, where in is a 2d array of points and out is the classification for each point.
+return: 0>=number of iterations; -1=k invalid; -2=invalid iterations; */
 int kmeans(double* in, int* out, int size, int k, int iterations)
 {
 	// Step-1: Select value of k, to decide number of clusters to be formed.
