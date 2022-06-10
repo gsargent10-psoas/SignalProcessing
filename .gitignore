@@ -60,3 +60,6 @@ test
 *.pi
 *.pi.hdr
 *.swp
+
+test_signalprocessing
+test_piwrapper
