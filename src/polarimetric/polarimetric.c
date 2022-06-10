@@ -7,7 +7,8 @@
 
 /*** External Functions ***/
 
-/* input: modulation={0,1,2,3} (2x2a,2x2b,3x2,4x2); */
+/* Form the desired modulation pattern.
+input: modulation={0,1,2,3} (2x2a,2x2b,3x2,4x2); */
 int formugrid(double *s0, double *s1, double *s2, double *out_data, int width, int height, int modulation)
 {
 	if (modulation > 3 || modulation < 0)
@@ -102,7 +103,8 @@ int formugrid(double *s0, double *s1, double *s2, double *out_data, int width, i
 	return modulation;
 }
 
-/* input: in_data= ; out_data=height by width with depth of 5 (so,s1,s2,dolp,aop) */
+/* Compute intensity images from Stokes.
+input: in_data= ; out_data=height by width with depth of 5 (so,s1,s2,dolp,aop) */
 void computeintensity(double *s0,double *s1, double *s2, double *out_data, int width, int height, double angle)
 {
 	angle = 2.0*angle*(M_PI/180.0);
