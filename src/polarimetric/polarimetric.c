@@ -114,3 +114,4 @@ void computeintensity(double *s0,double *s1, double *s2, double *out_data, int w
 	}
 }
 
+void Stitching(){}
