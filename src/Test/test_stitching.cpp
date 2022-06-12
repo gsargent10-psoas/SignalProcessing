@@ -16,6 +16,32 @@ int main()
 	//Stitching algroithim is dependent on the Integer Pattern
 	//but if the Integer pattern is changed it impacts The entire Stitching and subimage process
 	
+	int TestImage[20][24];
+	bool pattern;
+	
+	for (int i = 0; i < 20; i += 2){
+		for (int j = 0; j< 24; j++){
+			pattern = j % 2;
+			//cout << pattern << endl;
+			if (pattern == 0){
+				TestImage[i][j] = 90;
+				TestImage[i+1][j] = 135;
+			} else {
+				TestImage[i][j] = 45;
+				TestImage[i+1][j] = 0;
+		}	
+			
+		}	
+	}
+	
+	
+	for (int i = 0 ; i < 20; i++){
+		for (int j = 0; j < 24; j++){
+		cout << TestImage[i][j] << ", ";
+		}
+	cout <<endl;
+	}
+	
 
 	string filename = "./test.pi";
 	double data[4] = {1.0, 2.0, 3.0, 4.0};
