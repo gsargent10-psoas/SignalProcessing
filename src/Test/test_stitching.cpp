@@ -1,47 +1,18 @@
 #include "piwrapper.hpp"
+#include "polarimetric.h"
 #include <iostream>
 #include <string>
-#include "polarimetric.h"
+
 
 using namespace std;
 
+void formImage(double* TestImage);
+
 int main()
 {
-	//Create A large Test Image with a 2x2 Pattern
-	//Create 64x64 SubImages
+	double* TestImage = new double[2040*2048]; //rows * columns
+	formImage(TestImage);
 
-	//Stitch Subimages back into Large Image
-	//compare input(Image) large image and Output(stitch image) large Image to make sure its the same.
-
-	//Stitching algroithim is dependent on the Integer Pattern
-	//but if the Integer pattern is changed it impacts The entire Stitching and subimage process
-	
-	int TestImage[20][24];
-	bool pattern;
-	
-	for (int i = 0; i < 20; i += 2){
-		for (int j = 0; j< 24; j++){
-			pattern = j % 2;
-			//cout << pattern << endl;
-			if (pattern == 0){
-				TestImage[i][j] = 90;
-				TestImage[i+1][j] = 135;
-			} else {
-				TestImage[i][j] = 45;
-				TestImage[i+1][j] = 0;
-		}	
-			
-		}	
-	}
-	
-	
-	for (int i = 0 ; i < 20; i++){
-		for (int j = 0; j < 24; j++){
-		cout << TestImage[i][j] << ", ";
-		}
-	cout <<endl;
-	}
-	
 
 	string filename = "./test.pi";
 	double data[4] = {1.0, 2.0, 3.0, 4.0};
@@ -58,6 +29,63 @@ int main()
 
 
 	Stitching();
+}
+	
+	void formImage(double* TestImage){ 
+
+	//Create A large Test Image with a 2x2 Pattern
+	//Create 64x64 SubImages
+
+	//Stitch Subimages back into Large Image
+	//compare input(Image) large image and Output(stitch image) large Image to make sure its the same.
+
+	//Stitching algroithim is dependent on the Integer Pattern
+	//but if the Integer pattern is changed it impacts The entire Stitching and subimage process
+	
+	int pattern = 0;
+	int count = 0;
+	bool change = true;
+
+	for (int i = 0; i < 2040*2048; i+=2){ //rows x columns
+	count+=2;
+	
+		if (count >= 2048){	
+
+			while (change == true ){
+	
+				if (pattern == 0){
+				pattern = 1;
+				break;
+				}
+		
+				if (pattern == 1){
+				pattern = 0;
+				break;
+				}
+			}		
+		count = 0;
+		change = true;
+	}
+
+		if (pattern == 0){
+			TestImage[i] = 90;
+			TestImage[i+1] = 135;
+		}
+		if (pattern == 1){
+			TestImage[i] = 45;
+			TestImage[i+1] = 0;
+		}
+		
+		
+		}
+	
+	
+	for (int i = 0 ; i < 2040*2048; i++){
+		 cout << TestImage[i] << ", ";
+	}
+	
+	}
+
 
 	
-}
+
