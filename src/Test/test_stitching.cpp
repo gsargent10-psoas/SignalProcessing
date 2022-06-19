@@ -1,17 +1,20 @@
 #include "piwrapper.hpp"
 #include "polarimetric.h"
 #include <iostream>
+#include <vector>
 #include <string>
 
 
 using namespace std;
 
-void formImage(double* TestImage);
+void formImage(double* TestImage, double* Sub, vector<double*> SubImages);
 
 int main()
 {
-	double* TestImage = new double[2040*2048]; //rows * columns
-	formImage(TestImage);
+	double* TestImage = new double[2040*2048]; //rows * columns TestImage
+	double* Sub = new double[64*64]; //rows * columns SubImage
+	vector<double*> SubImages;
+	formImage(TestImage, Sub, SubImages);
 
 
 	string filename = "./test.pi";
@@ -31,7 +34,7 @@ int main()
 	Stitching();
 }
 	
-	void formImage(double* TestImage){ 
+	void formImage(double* TestImage, double* Sub, vector<double*> SubImages){ 
 
 	//Create A large Test Image with a 2x2 Pattern
 	//Create 64x64 SubImages
@@ -41,6 +44,8 @@ int main()
 
 	//Stitching algroithim is dependent on the Integer Pattern
 	//but if the Integer pattern is changed it impacts The entire Stitching and subimage process
+	
+	//Generating Main Image portion
 	
 	int pattern = 0;
 	int count = 0;
@@ -79,12 +84,50 @@ int main()
 		
 		}
 	
-	
+	int TestImageValues = 0; 
 	for (int i = 0 ; i < 2040*2048; i++){
-		 cout << TestImage[i] << ", ";
+		 TestImageValues++;
+		 //cout << TestImage[i] << ", ";
+
+	}
+	cout <<"there are " << TestImageValues << " values in the Test Image" << endl;
+	
+	//Generating SubImages portion
+	
+	//Sub count should go up to 64 for now, will make it changable based off of desired sub image size
+	int SubCount = 0;
+	int SubIndex = 0;
+	int LastIndex = 0;
+	int RowCount = 0;
+	int SubVariable = 0;
+	
+	for (int i = 0; i < 2040*2048; i++){
+		SubVariable++;
+		if (SubVariable >= (64*64)){
+			SubVariable = 0;
+		}
+		if (SubCount <= 64){
+			Sub[SubVariable] = TestImage[i];
+			SubCount++;
+			} else {
+				SubCount = 0;
+				SubIndex = i+1; //Sets new starting index of next iteration 65 positions up. 
+				i+= 2040; // sets current index 2048 positions up to get the next pattern of the subimage
+				RowCount++; 
+			} if (RowCount >= 65) {
+			RowCount = 0;
+			i = SubIndex;
+			SubImages.push_back(Sub);
+			
+			} 
+		}
+	for (int i =0; i < 64*64; i++){
+		cout << Sub[i] << ", " ;
+	}
+	cout << endl;
 	}
 	
-	}
+	
 
 
 	
