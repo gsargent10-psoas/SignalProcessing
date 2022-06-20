@@ -90,6 +90,7 @@ int main()
 		 //cout << TestImage[i] << ", ";
 
 	}
+	
 	cout <<"there are " << TestImageValues << " values in the Test Image" << endl;
 	
 	//Generating SubImages portion
@@ -102,14 +103,16 @@ int main()
 	int SubVariable = 0;
 	
 	for (int i = 0; i < 2040*2048; i++){
-		SubVariable++;
+		
 		if (SubVariable >= (64*64)){
 			SubVariable = 0;
 		}
-		if (SubCount <= 64){
+		
+		if (SubCount < 64){
 			Sub[SubVariable] = TestImage[i];
 			SubCount++;
-			} else {
+		}
+		if (SubCount >= 64){
 				SubCount = 0;
 				SubIndex = i+1; //Sets new starting index of next iteration 65 positions up. 
 				i+= 2040; // sets current index 2048 positions up to get the next pattern of the subimage
@@ -119,12 +122,20 @@ int main()
 			i = SubIndex;
 			SubImages.push_back(Sub);
 			
-			} 
+			}
+		SubVariable++; 
 		}
 	for (int i =0; i < 64*64; i++){
 		cout << Sub[i] << ", " ;
 	}
 	cout << endl;
+	
+	for(int i =0;i < 1020; i++){
+		for (int j =0; j < 64*64; j++){
+			cout << SubImages[i][j] << ", ";
+		}
+		cout << endl;
+	}
 	}
 	
 	
