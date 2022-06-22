@@ -64,3 +64,5 @@ test
 test_signalprocessing
 test_piwrapper
 test_stitching
+
+.vscode.*
