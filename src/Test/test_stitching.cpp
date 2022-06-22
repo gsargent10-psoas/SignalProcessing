@@ -138,7 +138,7 @@ int main()
 		SubVariable++; 
 		}
 	for (int i =0; i < 64*64; i++){
-		cout << Sub[i] << ", " ;
+		//cout << Sub[i] << ", " ;
 	}
 	cout << endl;
 	
@@ -147,7 +147,7 @@ int main()
 			//cout << SubImages[i][j] << ", ";
 		//if (SubImages[i][j] == )
 		}
-		cout << endl;
+		//cout << endl;
 	}
 	}
 	
