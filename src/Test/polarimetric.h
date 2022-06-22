@@ -8,3 +8,7 @@ void computeintensity(double *s0,double *s1, double *s2, double *out_data, int w
 
 /* The stitching algroithim */
 void Stitching();
+//ONLY EDIT THE VERSION IN POLARIMETIC FOLDER
+//ONLY EDIT THE VERSION IN POLARIMETIC FOLDER
+//ONLY EDIT THE VERSION IN POLARIMETIC FOLDER
+//DOUBLE CHECK
