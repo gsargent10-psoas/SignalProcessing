@@ -11,7 +11,7 @@ void formImage(double* TestImage, double* Sub, vector<double*> SubImages);
 
 int main()
 {
-	double* TestImage = new double[2040*2048]; //rows * columns TestImage
+	double* TestImage = new double[2448*2048]; //rows * columns TestImage
 	double* Sub = new double[64*64]; //rows * columns SubImage
 	vector<double*> SubImages;
 	formImage(TestImage, Sub, SubImages);
@@ -33,7 +33,9 @@ int main()
 
 	Stitching();
 }
-	
+	//void formSubImage22(double* TestImage, int t_rows, int t_columns, double* SubImagesss, int subSizeX, int SubSizey, int numSub, int* error ){
+
+	//}
 	void formImage(double* TestImage, double* Sub, vector<double*> SubImages){ 
 
 	//Create A large Test Image with a 2x2 Pattern
@@ -46,15 +48,20 @@ int main()
 	//but if the Integer pattern is changed it impacts The entire Stitching and subimage process
 	
 	//Generating Main Image portion
+
+	// status: 0 = succes, 1 = success, but number of subimages generated does not equal num_sub
+	//-1 overlap is too large, -2 subimage is too large
+
+	//*status = 0;
 	
 	int pattern = 0;
 	int count = 0;
 	bool change = true;
 
-	for (int i = 0; i < 2040*2048; i+=2){ //rows x columns
+	for (int i = 0; i < 2448*2048; i+=2){ //rows x columns
 	count+=2;
 	
-		if (count >= 2048){	
+		if (count >= 2448){	
 
 			while (change == true ){
 	
@@ -85,7 +92,7 @@ int main()
 		}
 	
 	int TestImageValues = 0; 
-	for (int i = 0 ; i < 2040*2048; i++){
+	for (int i = 0 ; i < 2448*2048; i++){
 		 TestImageValues++;
 		 //cout << TestImage[i] << ", ";
 
@@ -94,15 +101,20 @@ int main()
 	cout <<"there are " << TestImageValues << " values in the Test Image" << endl;
 	
 	//Generating SubImages portion
-	
+	//check if any overlap is happening, if the Subimage is cut off fill in the values with the expected pattern
+
 	//Sub count should go up to 64 for now, will make it changable based off of desired sub image size
+
+	//overlap example create edges of Subimages with negative values of (generated overlap<- the index edge amount of the bad values)
+
+	//create a 3d single pointer array instead of a vector that holds all the Subimages for the stitching algorithimg 
 	int SubCount = 0;
 	int SubIndex = 0;
 	int LastIndex = 0;
 	int RowCount = 0;
 	int SubVariable = 0;
 	
-	for (int i = 0; i < 2040*2048; i++){
+	for (int i = 0; i < 2448*2048; i++){
 		
 		if (SubVariable >= (64*64)){
 			SubVariable = 0;
@@ -115,7 +127,7 @@ int main()
 		if (SubCount >= 64){
 				SubCount = 0;
 				SubIndex = i+1; //Sets new starting index of next iteration 65 positions up. 
-				i+= 2040; // sets current index 2048 positions up to get the next pattern of the subimage
+				i+= 2048; // sets current index 2048 positions up to get the next pattern of the subimage
 				RowCount++; 
 			} if (RowCount >= 65) {
 			RowCount = 0;
@@ -130,9 +142,10 @@ int main()
 	}
 	cout << endl;
 	
-	for(int i =0;i < 1020; i++){
+	for(int i =0;i < 1224; i++){
 		for (int j =0; j < 64*64; j++){
-			cout << SubImages[i][j] << ", ";
+			//cout << SubImages[i][j] << ", ";
+		//if (SubImages[i][j] == )
 		}
 		cout << endl;
 	}
