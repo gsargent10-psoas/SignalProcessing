@@ -7,14 +7,14 @@
 
 using namespace std;
 
-void formImage(double* TestImage, double* Sub, vector<double*> SubImages);
+void formImage(double* TestImage, double* SubImages);
 
 int main()
 {
 	double* TestImage = new double[2448*2048]; //rows * columns TestImage
-	double* Sub = new double[64*64]; //rows * columns SubImage
-	vector<double*> SubImages;
-	formImage(TestImage, Sub, SubImages);
+	double* SubImages = new double[2448*2048]; //rows * columns SubImage
+	//vector<double*> SubImages;
+	formImage(TestImage, SubImages);
 
 
 	string filename = "./test.pi";
@@ -33,10 +33,10 @@ int main()
 
 	Stitching();
 }
-	//void formSubImage22(double* TestImage, int t_rows, int t_columns, double* SubImagesss, int subSizeX, int SubSizey, int numSub, int* error ){
+	//void formSubImage22(double* TestImage, int t_rows, int t_columns, double* SubImages, int subSizeX, int SubSizey, int numSub, int* error ){
 
 	//}
-	void formImage(double* TestImage, double* Sub, vector<double*> SubImages){ 
+	void formImage(double* TestImage, double* SubImages){ 
 
 	//Create A large Test Image with a 2x2 Pattern
 	//Create 64x64 SubImages
@@ -98,6 +98,8 @@ int main()
 
 	}
 	
+	
+	
 	cout <<"there are " << TestImageValues << " values in the Test Image" << endl;
 	
 	//Generating SubImages portion
@@ -109,11 +111,50 @@ int main()
 
 	//create a 3d single pointer array instead of a vector that holds all the Subimages for the stitching algorithimg 
 	int SubCount = 0;
-	int SubIndex = 0;
 	int LastIndex = 0;
 	int RowCount = 0;
 	int SubVariable = 0;
 	
+	int j = 0;
+	for (int i = 0; i < 2448*2048; i++){
+		j++; 
+
+		cout << i << ", ";
+		
+		
+		if (SubVariable >= (64*64)){
+			SubVariable = 0;
+		}
+		
+		if (SubCount < 64){
+			SubImages[i] = TestImage[j];
+			SubCount++;
+		}
+		if (SubCount >= 64){
+				SubCount = 0;
+				j+= 2448; // sets current index 2048 positions up to get the next pattern of the subimage
+				RowCount++; //counts up to row 65 for the pattern
+			} if (RowCount >= 65) {
+			RowCount = 0;
+			
+			
+			}
+		SubVariable++; 
+		}
+	for (int i =0; i < 64*64; i++){
+		//cout << Sub[i] << ", " ;
+	}
+	cout << endl;
+	
+	int poo = 0;
+	
+	for(int i =0; i < 2448*2048; i++){
+	
+	
+		
+	}
+
+	/*
 	for (int i = 0; i < 2448*2048; i++){
 		
 		if (SubVariable >= (64*64)){
@@ -127,7 +168,7 @@ int main()
 		if (SubCount >= 64){
 				SubCount = 0;
 				SubIndex = i+1; //Sets new starting index of next iteration 65 positions up. 
-				i+= 2048; // sets current index 2048 positions up to get the next pattern of the subimage
+				i+= 2448; // sets current index 2048 positions up to get the next pattern of the subimage
 				RowCount++; 
 			} if (RowCount >= 65) {
 			RowCount = 0;
@@ -149,6 +190,7 @@ int main()
 		}
 		//cout << endl;
 	}
+	*/
 	}
 	
 	
