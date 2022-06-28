@@ -119,11 +119,12 @@ int main()
 	for (int i = 0; i < 2448*2048; i++){
 		j++; 
 
-		cout << i << ", ";
+		//cout << j << ", ";
 		
 		
 		if (SubVariable >= (64*64)){
 			SubVariable = 0;
+			i = LastIndex;
 		}
 		
 		if (SubCount < 64){
@@ -132,6 +133,7 @@ int main()
 		}
 		if (SubCount >= 64){
 				SubCount = 0;
+				LastIndex = j + 1; //sets next starting point 65 positions up,
 				j+= 2448; // sets current index 2048 positions up to get the next pattern of the subimage
 				RowCount++; //counts up to row 65 for the pattern
 			} if (RowCount >= 65) {
@@ -149,7 +151,7 @@ int main()
 	int poo = 0;
 	
 	for(int i =0; i < 2448*2048; i++){
-	
+		cout << SubImages[i] << ", " ;
 	
 		
 	}
