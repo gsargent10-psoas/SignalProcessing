@@ -16,9 +16,9 @@ int main()
 	double* TestImage = new double[image_x*image_y]; //rows * columns TestImage
 
 	// int getNumberSubImages22(int image_x, int image_y, int sub_x, int sub_y, int overlap);
-	int sub_depth = getNumberSubImages22(image_x,image_y,sub_x,sub_y,overlap);
+	int sub_depth = getNumberSubImages22(image_y,image_x,sub_y,sub_x,overlap);
 	double* SubImages = new double[sub_x*sub_y*sub_depth]; //rows * columns SubImage
-	
+
 	//vector<double*> SubImages;
 	formImage(TestImage);
 

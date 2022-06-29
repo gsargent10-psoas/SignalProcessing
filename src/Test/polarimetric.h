@@ -7,7 +7,7 @@ input: in_data= ; out_data=height by width with depth of 5 (so,s1,s2,dolp,aop) *
 void computeintensity(double *s0,double *s1, double *s2, double *out_data, int width, int height, double angle);
 
 /* Return the number of sub images based on full image size, desired sub image size, and overlap. */
-int getNumberSubImages22(int image_x, int image_y, int sub_x, int sub_y, int overlap);
+int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int overlap);
 
 /* The stitching algroithim */
 void Stitching();
