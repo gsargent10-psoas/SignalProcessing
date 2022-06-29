@@ -7,14 +7,23 @@
 
 using namespace std;
 
-void formImage(double* TestImage, double* SubImages);
+void formImage(double* TestImage);
 
 int main()
 {
-	double* TestImage = new double[2448*2048]; //rows * columns TestImage
-	double* SubImages = new double[2448*2048]; //rows * columns SubImage
+	int image_x = 2448; int image_y = 2048; int sub_x = 64; int sub_y = 64; int overlap = 0;
+	int* error; *error = 0;
+	double* TestImage = new double[image_x*image_y]; //rows * columns TestImage
+
+	// int getNumberSubImages22(int image_x, int image_y, int sub_x, int sub_y, int overlap);
+	int sub_depth = getNumberSubImages22(image_x,image_y,sub_x,sub_y,overlap);
+	double* SubImages = new double[sub_x*sub_y*sub_depth]; //rows * columns SubImage
+	
 	//vector<double*> SubImages;
-	formImage(TestImage, SubImages);
+	formImage(TestImage);
+
+	//formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error)
+	formSubImage22(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, error);
 
 
 	string filename = "./test.pi";
@@ -36,7 +45,7 @@ int main()
 	//void formSubImage22(double* TestImage, int t_rows, int t_columns, double* SubImages, int subSizeX, int SubSizey, int numSub, int* error ){
 
 	//}
-	void formImage(double* TestImage, double* SubImages){ 
+	void formImage(double* TestImage){ 
 
 	//Create A large Test Image with a 2x2 Pattern
 	//Create 64x64 SubImages
