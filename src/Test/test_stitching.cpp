@@ -115,7 +115,9 @@ int main()
 	int RowCount = 0;
 	int SubVariable = 0;
 	
+	bool FirstLine = true;
 	int j = 0;
+	
 	for (int i = 0; i < 2448*2048; i++){
 		j++; 
 
@@ -124,25 +126,30 @@ int main()
 		
 		if (SubVariable >= (64*64)){
 			SubVariable = 0;
-			i = LastIndex;
+			j = LastIndex;
 		}
-		
 		if (SubCount < 64){
 			SubImages[i] = TestImage[j];
 			SubCount++;
+			
 		}
 		if (SubCount >= 64){
 				SubCount = 0;
-				LastIndex = j + 1; //sets next starting point 65 positions up,
+				if (FirstLine = true){
+					LastIndex = i + 1; //sets next starting point 65 positions up,
+					FirstLine = false;
+				}
+				 
 				j+= 2448; // sets current index 2048 positions up to get the next pattern of the subimage
 				RowCount++; //counts up to row 65 for the pattern
 			} if (RowCount >= 65) {
 			RowCount = 0;
-			
+			FirstLine = true;
 			
 			}
 		SubVariable++; 
 		}
+	
 	for (int i =0; i < 64*64; i++){
 		//cout << Sub[i] << ", " ;
 	}
@@ -155,44 +162,7 @@ int main()
 	
 		
 	}
-
-	/*
-	for (int i = 0; i < 2448*2048; i++){
-		
-		if (SubVariable >= (64*64)){
-			SubVariable = 0;
-		}
-		
-		if (SubCount < 64){
-			Sub[SubVariable] = TestImage[i];
-			SubCount++;
-		}
-		if (SubCount >= 64){
-				SubCount = 0;
-				SubIndex = i+1; //Sets new starting index of next iteration 65 positions up. 
-				i+= 2448; // sets current index 2048 positions up to get the next pattern of the subimage
-				RowCount++; 
-			} if (RowCount >= 65) {
-			RowCount = 0;
-			i = SubIndex;
-			SubImages.push_back(Sub);
-			
-			}
-		SubVariable++; 
-		}
-	for (int i =0; i < 64*64; i++){
-		//cout << Sub[i] << ", " ;
-	}
-	cout << endl;
 	
-	for(int i =0;i < 1224; i++){
-		for (int j =0; j < 64*64; j++){
-			//cout << SubImages[i][j] << ", ";
-		//if (SubImages[i][j] == )
-		}
-		//cout << endl;
-	}
-	*/
 	}
 	
 	
