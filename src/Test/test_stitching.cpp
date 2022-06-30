@@ -1,13 +1,18 @@
 #include "piwrapper.hpp"
 #include "polarimetric.h"
 #include <iostream>
-#include <vector>
 #include <string>
 
 
 using namespace std;
 
 void formImage(double* TestImage);
+void formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error);
+
+int getNumberSubImages22(int image_x, int image_y, int sub_x, int sub_y, int overlap){
+	return 1;
+	/* Return the number of sub images based on full image size, desired sub image size, and overlap. */
+}
 
 int main()
 {
@@ -15,10 +20,12 @@ int main()
 	int* error; *error = 0;
 	double* TestImage = new double[image_x*image_y]; //rows * columns TestImage
 
-	// int getNumberSubImages22(int image_x, int image_y, int sub_x, int sub_y, int overlap);
+	//int getNumberSubImages22(int image_x, int image_y, int sub_x, int sub_y, int overlap);
 	int sub_depth = getNumberSubImages22(image_y,image_x,sub_y,sub_x,overlap);
+	
+	
 	double* SubImages = new double[sub_x*sub_y*sub_depth]; //rows * columns SubImage
-
+	
 	//vector<double*> SubImages;
 	formImage(TestImage);
 
@@ -42,9 +49,6 @@ int main()
 
 	Stitching();
 }
-	//void formSubImage22(double* TestImage, int t_rows, int t_columns, double* SubImages, int subSizeX, int SubSizey, int numSub, int* error ){
-
-	//}
 	void formImage(double* TestImage){ 
 
 	//Create A large Test Image with a 2x2 Pattern
@@ -110,6 +114,10 @@ int main()
 	
 	
 	cout <<"there are " << TestImageValues << " values in the Test Image" << endl;
+	}
+
+	void formSubImage22(double* Test_Image, int image_rows, int image_cols, double* Sub_Images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error){
+
 	
 	//Generating SubImages portion
 	//check if any overlap is happening, if the Subimage is cut off fill in the values with the expected pattern
@@ -138,7 +146,7 @@ int main()
 			j = LastIndex;
 		}
 		if (SubCount < 64){
-			SubImages[i] = TestImage[j];
+			Sub_Images[i] = Test_Image[j];
 			SubCount++;
 			
 		}
@@ -167,7 +175,7 @@ int main()
 	int poo = 0;
 	
 	for(int i =0; i < 2448*2048; i++){
-		cout << SubImages[i] << ", " ;
+		cout << Sub_Images[i] << ", " ;
 	
 		
 	}
