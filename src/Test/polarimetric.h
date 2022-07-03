@@ -8,9 +8,11 @@ void computeintensity(double *s0,double *s1, double *s2, double *out_data, int w
 
 /* Return the number of sub images based on full image size, desired sub image size, and overlap. */
 int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int overlap);
+    
 
 /* The stitching algroithim */
 void Stitching();
+
 //ONLY EDIT THE VERSION IN POLARIMETIC FOLDER
 //ONLY EDIT THE VERSION IN POLARIMETIC FOLDER
 //ONLY EDIT THE VERSION IN POLARIMETIC FOLDER

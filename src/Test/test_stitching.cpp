@@ -9,27 +9,27 @@ using namespace std;
 void formImage(double* TestImage);
 void formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error);
 
-int getNumberSubImages22(int image_x, int image_y, int sub_x, int sub_y, int overlap){
-	return 1;
-	/* Return the number of sub images based on full image size, desired sub image size, and overlap. */
-}
+int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int overlap){
+	return (image_y * image_x) / ((sub_x - overlap) * (sub_y - overlap));
+	
+	}
 
 int main()
 {
-	int image_x = 2448; int image_y = 2048; int sub_x = 64; int sub_y = 64; int overlap = 0;
-	int* error; *error = 0;
+	int image_x = 2448; int image_y = 2048; int sub_x = 64; int sub_y = 64; int overlap = 2;
+	int* error = 0; 
+	
 	double* TestImage = new double[image_x*image_y]; //rows * columns TestImage
 
-	//int getNumberSubImages22(int image_x, int image_y, int sub_x, int sub_y, int overlap);
+	
+	
 	int sub_depth = getNumberSubImages22(image_y,image_x,sub_y,sub_x,overlap);
-	
-	
+	cout <<sub_depth << endl;
+	cout << sub_x*sub_y*sub_depth << endl;
 	double* SubImages = new double[sub_x*sub_y*sub_depth]; //rows * columns SubImage
 	
-	//vector<double*> SubImages;
 	formImage(TestImage);
 
-	//formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error)
 	formSubImage22(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, error);
 
 
@@ -51,6 +51,7 @@ int main()
 }
 	void formImage(double* TestImage){ 
 
+	
 	//Create A large Test Image with a 2x2 Pattern
 	//Create 64x64 SubImages
 
@@ -71,7 +72,7 @@ int main()
 	int count = 0;
 	bool change = true;
 
-	for (int i = 0; i < 2448*2048; i+=2){ //rows x columns
+	for (int i = 0; i < 2048*2448; i+=2){ //rows x columns
 	count+=2;
 	
 		if (count >= 2448){	
@@ -105,7 +106,7 @@ int main()
 		}
 	
 	int TestImageValues = 0; 
-	for (int i = 0 ; i < 2448*2048; i++){
+	for (int i = 0 ; i < 2048*2448; i++){
 		 TestImageValues++;
 		 //cout << TestImage[i] << ", ";
 
@@ -127,6 +128,7 @@ int main()
 	//overlap example create edges of Subimages with negative values of (generated overlap<- the index edge amount of the bad values)
 
 	//create a 3d single pointer array instead of a vector that holds all the Subimages for the stitching algorithimg 
+	
 	int SubCount = 0;
 	int LastIndex = 0;
 	int RowCount = 0;
@@ -138,12 +140,12 @@ int main()
 	for (int i = 0; i < 2448*2048; i++){
 		j++; 
 
-		//cout << j << ", ";
-		
 		
 		if (SubVariable >= (64*64)){
 			SubVariable = 0;
 			j = LastIndex;
+			cout << j << endl;
+			
 		}
 		if (SubCount < 64){
 			Sub_Images[i] = Test_Image[j];
@@ -151,14 +153,15 @@ int main()
 			
 		}
 		if (SubCount >= 64){
-				SubCount = 0;
-				if (FirstLine = true){
+				if (FirstLine == true){
 					LastIndex = i + 1; //sets next starting point 65 positions up,
 					FirstLine = false;
 				}
-				 
+
 				j+= 2448; // sets current index 2048 positions up to get the next pattern of the subimage
 				RowCount++; //counts up to row 65 for the pattern
+				SubCount = 0;
+
 			} if (RowCount >= 65) {
 			RowCount = 0;
 			FirstLine = true;
@@ -167,15 +170,10 @@ int main()
 		SubVariable++; 
 		}
 	
-	for (int i =0; i < 64*64; i++){
-		//cout << Sub[i] << ", " ;
-	}
-	cout << endl;
-	
-	int poo = 0;
+
 	
 	for(int i =0; i < 2448*2048; i++){
-		cout << Sub_Images[i] << ", " ;
+		//cout << Sub_Images[i] << ", " ;
 	
 		
 	}
