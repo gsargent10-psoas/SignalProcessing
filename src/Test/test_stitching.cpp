@@ -119,61 +119,79 @@ int main()
 
 	void formSubImage22(double* Test_Image, int image_rows, int image_cols, double* Sub_Images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error){
 
-	
 	//Generating SubImages portion
 	//check if any overlap is happening, if the Subimage is cut off fill in the values with the expected pattern
 
-	//Sub count should go up to 64 for now, will make it changable based off of desired sub image size
-
-	//overlap example create edges of Subimages with negative values of (generated overlap<- the index edge amount of the bad values)
-
-	//create a 3d single pointer array instead of a vector that holds all the Subimages for the stitching algorithimg 
+	//overlap example create edges of Subimages with negative values of (generated overlap<- the index edge amount of the bad values
 	
 	int SubCount = 0;
 	int LastIndex = 0;
 	int RowCount = 0;
 	int SubVariable = 0;
-	
-	bool FirstLine = true;
 	int j = 0;
+
+	bool FirstLine = true;
 	
+	double sub_colCount = 0;
+	double sub_rowCount = 0;
+
+    double sub_colAmount = image_cols / sub_cols;
+	double sub_rowAmount = image_rows / sub_rows;
+	cout << sub_colAmount << endl;
+	cout << sub_rowAmount << endl;
+
 	for (int i = 0; i < 2448*2048; i++){
 		j++; 
 
-		
+	 if (sub_colCount <= sub_colAmount){
 		if (SubVariable >= (64*64)){
+			
+			sub_colCount++;
 			SubVariable = 0;
+			
 			j = LastIndex;
-			cout << j << endl;
+			//cout << j << ", ";
+			
 			
 		}
-		if (SubCount < 64){
-			Sub_Images[i] = Test_Image[j];
-			SubCount++;
+	}
+	//this is bad, its hard coded and I need to change this to handle different subsizes 
+	//but for now it can handle when the rows are not divisible by 64
+	if (sub_colCount >= sub_colAmount){
+			j+=image_cols/4;
+			sub_colCount = 0;
+			RowCount = 0;
+			SubCount = 0;
+		}
+
+	if (SubCount < 64){
+		Sub_Images[i] = Test_Image[j];
+		SubCount++;
 			
 		}
-		if (SubCount >= 64){
-				if (FirstLine == true){
-					LastIndex = i + 1; //sets next starting point 65 positions up,
-					FirstLine = false;
+	if (SubCount >= 64){
+			if (FirstLine == true){
+				LastIndex = i + 1; //sets next starting point 65 positions up, if this is the first run through
+				FirstLine = false;
 				}
 
-				j+= 2448; // sets current index 2048 positions up to get the next pattern of the subimage
-				RowCount++; //counts up to row 65 for the pattern
-				SubCount = 0;
+			j+=image_rows-sub_rows; // sets current index 2448-64 positions up to get the next pattern of the subimage
+				
+			RowCount++; //counts up to row 65 for the pattern
+			SubCount = 0;
 
-			} if (RowCount >= 65) {
-			RowCount = 0;
-			FirstLine = true;
+	} if (RowCount >= 65) {
+		RowCount = 0;
+		FirstLine = true;
 			
-			}
-		SubVariable++; 
 		}
+	SubVariable++; 
+	}
 	
 
 	
 	for(int i =0; i < 2448*2048; i++){
-		//cout << Sub_Images[i] << ", " ;
+		cout << Sub_Images[i] << ", " ;
 	
 		
 	}
