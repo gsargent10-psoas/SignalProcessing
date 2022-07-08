@@ -117,7 +117,9 @@ void computeintensity(double *s0,double *s1, double *s2, double *out_data, int w
 /* Return the number of sub images based on full image size, desired sub image size, and overlap. */
 int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int overlap)
 {
-	return 0;
+	int x = (int)ceil(((double)image_x/(double)(sub_x-overlap)));
+	int y = (int)ceil(((double)image_y/(double)(sub_y-overlap)));
+	return x*y;
 }
 
 /* The stitching algroithim */
