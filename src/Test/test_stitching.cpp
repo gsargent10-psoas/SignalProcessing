@@ -6,11 +6,13 @@
 
 using namespace std;
 
-void formImage(double* TestImage);
+void formImage(double* TestImage, int image_rows, int image_cols);
 //void formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error);
 
 int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int overlap){
-	return (image_y * image_x) / ((sub_x - overlap) * (sub_y - overlap));
+		 return (image_x*image_y)/((sub_x-2*overlap)*(sub_y-2*overlap)); //round up eventually
+		
+
 	
 	}
 
@@ -28,7 +30,7 @@ int main()
 	cout << sub_x*sub_y*sub_depth << endl;
 	double* SubImages = new double[sub_x*sub_y*sub_depth]; //rows * columns SubImage
 	
-	formImage(TestImage);
+	formImage(TestImage, image_x, image_y);
 
 	formSubImage22(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, error);
 
@@ -49,7 +51,7 @@ int main()
 
 	Stitching();
 }
-	void formImage(double* TestImage){ 
+	void formImage(double* TestImage, int image_rows, int image_cols){ 
 
 	
 	//Create A large Test Image with a 2x2 Pattern
@@ -128,22 +130,7 @@ int main()
 
 	//make Num_Sub large enough to hold all the subimages for now
 
-	int SubCount = 0;
-	int LastIndex = 0;
-	int RowCount = 0;
-	int SubVariable = 0;
-	int j = 0;
-
-	bool FirstLine = true;
 	
-	double sub_colCount = 0;
-	double sub_rowCount = 0;
-
-    double sub_colAmount = double (image_cols) / double (sub_cols);
-	double sub_rowAmount = double (image_rows) / double (sub_rows);
-	//cout << sub_colAmount << endl;
-	//cout << sub_rowAmount << endl;
-
 	int xs = 0; int xe = sub_cols -1;
 	int ys = 0; int ye = sub_rows -1;
 	
@@ -154,8 +141,7 @@ int main()
 		xs = 0;
 		for (; xs < image_cols-1;){
 			//index = xs+ys*image_cols;
-			//cout << Test_Image[index] << ", "; 
-
+			//cout << ys+xs*image_cols << ", "; 
 
 			//the first pixel
 			if (xs == 0 && ys == 0){
@@ -163,6 +149,7 @@ int main()
 					for (int c = xs; c <= xs; c++){
 						index = c+r*image_cols;
 						//cout << Test_Image[index] << ", ";
+						//cout << c+r*image_cols << ", ";
 						//Sub_Images[] = Test_Image[index]; 
 					}
 				}
@@ -190,13 +177,13 @@ int main()
 			
 			//middle of the image
 			}else {
-				for (int r = ys; r <= ye; r++){
-					for (int c = xs; c <= xs; c++){
-						index = c+r*image_cols;
-						cout << Test_Image[index] << ", ";
+				//for (int r = ys; r <= ye; r++){
+					//for (int c = xs; c <= xs; c++){
+						//index = c+r*image_cols;
+						//cout << Test_Image[index] << ", ";
 						//Sub_Images[] = Test_Image[index]; 
-					}
-				}
+					//}
+				//}
 			}
 		
 	 		xs = xe-(2*overlap);
@@ -204,11 +191,12 @@ int main()
 				xs = xs - 1;
 
 			}
+			
 			xe = xs + sub_cols - 1;
 			count = count+1;
 		
 		}
-		ys = ye-(2*overlap);
+		ys = ye-(2*overlap);	
 		
 		if(ys % 2 != 0){
 				ys = ys - 1;
@@ -216,11 +204,34 @@ int main()
 			}
 			ye = ys + sub_rows - 1;
 	} 
-	 		
-
+	
 	/*
-	 if (sub_colCount <= sub_colAmount){
-		if (SubVariable >= (64*64)){
+	
+	int SubCount = 0;
+	int LastIndex = 0;
+	int RowCount = 0;
+	int SubVariable = 0;
+	int j = 0;
+
+	bool FirstLine = true;
+	
+	int sub_colCount = 0;
+	int sub_rowCount = 0;
+
+    double Dsub_colAmount = double (image_cols) / double (sub_cols-2*overlap);  
+	double Dsub_rowAmount = double (image_rows) / double (sub_rows-2*overlap);
+	int Isub_colAmount = image_cols / sub_cols-2*overlap;
+	int Isub_rowAmount = image_rows / sub_rows-2*overlap;
+	
+	cout << Dsub_colAmount << endl;
+	cout << Dsub_rowAmount << endl;
+
+	for (int i = 0; i < image_cols*image_rows; i++){
+		
+		j++;
+		cout << j << ", ";
+	 	
+			if (SubVariable >= (64*64)){
 			
 			sub_colCount++;
 			SubVariable = 0;
@@ -229,45 +240,50 @@ int main()
 			//cout << j << ", ";
 			
 			
-		}
-	}
-	//this is bad, its hard coded and I need to change this to handle different subsizes 
-	//but for now it can handle when the rows are not divisible by 64
-	if (sub_colCount >= sub_colAmount){
-			j+=image_cols/4;
-			sub_colCount = 0;
-			RowCount = 0;
-			SubCount = 0;
+		
 		}
 
-	if (SubCount < 64){
-		Sub_Images[i] = Test_Image[j];
-		SubCount++;
+		if (SubCount < 64){
+			//Sub_Images[i] = Test_Image[j];
+			SubCount++;
 			
 		}
-	if (SubCount >= 64){
+		if (SubCount >= 64){
 			if (FirstLine == true){
 				LastIndex = i + 1; //sets next starting point 65 positions up, if this is the first run through
 				FirstLine = false;
 				}
 
-			j+=image_rows-sub_rows; // sets current index 2448-64 positions up to get the next pattern of the subimage
+			j+=image_rows-sub_rows; // sets current index 2448-64 positions up to get the next pattern of the subimage //Possible subtract the overlap from this
 				
 			RowCount++; //counts up to row 65 for the pattern
 			SubCount = 0;
-
-	} if (RowCount >= 65) {
-		RowCount = 0;
-		FirstLine = true;
+		} 	
+		if (RowCount >= 65) {
+			RowCount = 0;
+			FirstLine = true;
 			
 		}
+
+		if (sub_colCount >= Dsub_colAmount && Dsub_colAmount - Isub_colAmount < 1){
+			double Dec = Dsub_colAmount - double(Isub_colAmount);
+			cout << "Dec " << Dec;
+	
+			sub_colCount = 0;
+			RowCount = 0;
+			SubCount = 0;
+		}
+
 	SubVariable++; 
 	}
 	
-	*/
+
+	for (int i = 0; i < sub_rows*sub_cols*num_sub ; i++){
+		//cout << Sub_Images[i] << ", ";
+		}
 		
 	
-	
+	*/
 	}
 	
 	
