@@ -1,5 +1,8 @@
 #include "piwrapper.hpp"
+extern "C"
+{
 #include "polarimetric.h"
+}
 #include <iostream>
 #include <string>
 
@@ -7,34 +10,40 @@
 using namespace std;
 
 void formImage(double* TestImage, int image_rows, int image_cols);
-//void formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error);
-
-int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int overlap){
-		 return (image_x*image_y)/((sub_x-2*overlap)*(sub_y-2*overlap)); //round up eventually
-		
-
-	
-	}
+void formSubImage22B(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error);
 
 int main()
 {
-	int image_x = 2448; int image_y = 2048; int sub_x = 64; int sub_y = 64; int overlap = 2;
-	int* error = 0; 
+	int image_x = 12; int image_y = 12; int sub_x = 10; int sub_y = 10; int overlap = 0;
+	int error = 0;
+	int* _error = &error; 
 	
 	double* TestImage = new double[image_x*image_y]; //rows * columns TestImage
 
 	
 	
 	int sub_depth = getNumberSubImages22(image_y,image_x,sub_y,sub_x,overlap);
-	cout <<sub_depth << endl;
+	cout << sub_depth << endl;
 	cout << sub_x*sub_y*sub_depth << endl;
 	double* SubImages = new double[sub_x*sub_y*sub_depth]; //rows * columns SubImage
 	
-	formImage(TestImage, image_x, image_y);
+	formImage(TestImage, image_y, image_x);
 
-	formSubImage22(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, error);
+	formSubImage22B(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, _error);
 
+	for (int s = 0; s < sub_depth; s++){
+		for (int r = 0; r < sub_y; r++){
+			for (int c = 0; c < sub_x; c++){
+				cout << SubImages[c+r*sub_x+s*sub_y*sub_x] << ", ";
+				}
+			cout <<endl;
+		}
+		cout <<endl;
+		cout <<endl;
+	}
+	cout << endl << "error: " << error <<endl;
 
+/*
 	string filename = "./test.pi";
 	double data[4] = {1.0, 2.0, 3.0, 4.0};
 	bool ret = openpiwriter((char*) filename.c_str(),2,2,4,true);
@@ -46,9 +55,9 @@ int main()
 	cout << "openpiread() return: " << ret << endl;
 	cout << "Width: " << getwidth() << ", Height: " << getheight() << endl;
 	closereader();
+	
+*/
 	return 0;
-
-
 	Stitching();
 }
 	void formImage(double* TestImage, int image_rows, int image_cols){ 
@@ -70,10 +79,10 @@ int main()
 	int count = 0;
 	bool change = true;
 
-	for (int i = 0; i < 2048*2448; i+=2){ //rows x columns
+	for (int i = 0; i < image_rows*image_cols; i+=2){ //rows x columns
 	count+=2;
 	
-		if (count >= 2448){	
+		if (count >= image_cols){	
 
 			while (change == true ){
 	
@@ -104,7 +113,7 @@ int main()
 		}
 	
 	int TestImageValues = 0; 
-	for (int i = 0 ; i < 2048*2448; i++){
+	for (int i = 0 ; i < image_rows*image_cols; i++){
 		 TestImageValues++;
 		 //cout << TestImage[i] << ", ";
 
@@ -115,7 +124,7 @@ int main()
 	cout <<"there are " << TestImageValues << " values in the Test Image" << endl;
 	}
 
-	void formSubImage22(double* Test_Image, int image_rows, int image_cols, double* Sub_Images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error){
+	void formSubImage22B(double* Test_Image, int image_rows, int image_cols, double* Sub_Images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error){
 
 
 	//Generating SubImages portion
@@ -134,157 +143,141 @@ int main()
 	int xs = 0; int xe = sub_cols -1;
 	int ys = 0; int ye = sub_rows -1;
 	
+	int sxs = 0; 
+	int sys = 0; 
+
 	int index = 0;
 	int count = 0;
-	
+	int subIndex = 0;
+
 	for (; ys < image_rows-1;){
 		xs = 0;
 		for (; xs < image_cols-1;){
 			//index = xs+ys*image_cols;
 			//cout << ys+xs*image_cols << ", "; 
 
-			//the first pixel
-			if (xs == 0 && ys == 0){
-				for (int r = ys; r <= ye; r++){
-					for (int c = xs; c <= xs; c++){
-						index = c+r*image_cols;
-						//cout << Test_Image[index] << ", ";
-						//cout << c+r*image_cols << ", ";
-						//Sub_Images[] = Test_Image[index]; 
+			if(xs >= image_cols-1 || ys >= image_rows-1){
+				*error = 1;	
+				return;
+			
+			}
+			//exceed pixel count on the bottom and right
+			else if(xe > image_cols-1 && ye > image_rows-1){
+				sxs = 0;
+				sys = 0;
+				for (int r = ys; r <= ye; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe; c++, sxs++){
+						if(c > image_cols-1 && r > image_rows-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							//cout << 0;
+							Sub_Images[subIndex] = -49.0;
+						}
+						else if (c > image_cols-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							//cout << 0;
+							Sub_Images[subIndex] = -49.0;
+						}
+						else if(r > image_rows-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							//cout << 0;
+							Sub_Images[subIndex] = -49.0;
+						}
+						else {
+							index = c+r*image_cols;
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							//cout << Test_Image[index] << ", ";
+							Sub_Images[subIndex] = Test_Image[index]; 
+							
+						}
 					}
 				}
-			} 
-
-			//left edge
-			else if(xs == 0){
-
-			}
-
-			//top edge
-			else if(ys == 0){
-
-			//exceed pixel count on the bottom and right
-			}else if(xe > image_cols-1 && ye > image_rows-1){
 
 			//exceed pixel count on the right edge
-			}else if(xe > image_cols-1){
-
-			//exceed pixel count on the bottom edge
-			}else if(ye > image_cols-1){
-			
-			}else if(xs >= image_cols-1 && ys >= image_rows-1){
-				*error = 1;	
-			
-			//middle of the image
-			}else {
-				//for (int r = ys; r <= ye; r++){
-					//for (int c = xs; c <= xs; c++){
-						//index = c+r*image_cols;
-						//cout << Test_Image[index] << ", ";
-						//Sub_Images[] = Test_Image[index]; 
-					//}
-				//}
 			}
-		
-	 		xs = xe-(2*overlap);
+			else if(xe > image_cols-1){
+				sxs = 0;
+				sys = 0;
+				for (int r = ys; r <= ye; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe; c++, sxs++){
+						if(c > image_cols-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							//cout << 0;	
+							Sub_Images[subIndex] = -99.0;
+						}
+						else{
+							
+							index = c+r*image_cols;
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							//cout << subIndex << ", ";
+							//cout << Test_Image[index] << ", ";
+							//cout << "(" << sxs << ", " << sys << ", " << count << ")" << ", ";
+							Sub_Images[subIndex] = Test_Image[index]; 
+						}
+					}
+				}
+			//exceed pixel count on the bottom edge
+			}
+			else if(ye > image_cols-1){
+				sxs = 0;
+				sys = 0;
+				for (int r = ys; r <= ye; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe; c++, sxs++){
+						if(r > image_rows-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							//cout << 0;	
+							Sub_Images[subIndex] = -99.0;
+						}
+						else{
+							index = c+r*image_cols;
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							//cout << Test_Image[index] << ", ";
+							Sub_Images[subIndex] = Test_Image[index]; 
+						}
+					}
+				}
+			}
+			else {
+				sxs = 0;
+				sys = 0;
+				for (int r = ys; r <= ye; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe; c++, sxs++){
+						index = c+r*image_cols;
+						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						//cout << Test_Image[index] << ", ";
+						Sub_Images[subIndex] = Test_Image[index]; 
+					}
+				}
+
+			}
+			count = count + 1;
+
+			if(count >= num_sub){
+				*error = 0;
+				return;
+			}
+
+	 		xs = xe-(2*overlap)+1;
 			if(xs % 2 != 0){
 				xs = xs - 1;
 
 			}
 			
 			xe = xs + sub_cols - 1;
-			count = count+1;
 		
 		}
-		ys = ye-(2*overlap);	
+		ys = ye-(2*overlap)+1;	
 		
 		if(ys % 2 != 0){
 				ys = ys - 1;
 
 			}
 			ye = ys + sub_rows - 1;
-	} 
-	
-	/*
-	
-	int SubCount = 0;
-	int LastIndex = 0;
-	int RowCount = 0;
-	int SubVariable = 0;
-	int j = 0;
-
-	bool FirstLine = true;
-	
-	int sub_colCount = 0;
-	int sub_rowCount = 0;
-
-    double Dsub_colAmount = double (image_cols) / double (sub_cols-2*overlap);  
-	double Dsub_rowAmount = double (image_rows) / double (sub_rows-2*overlap);
-	int Isub_colAmount = image_cols / sub_cols-2*overlap;
-	int Isub_rowAmount = image_rows / sub_rows-2*overlap;
-	
-	cout << Dsub_colAmount << endl;
-	cout << Dsub_rowAmount << endl;
-
-	for (int i = 0; i < image_cols*image_rows; i++){
-		
-		j++;
-		cout << j << ", ";
-	 	
-			if (SubVariable >= (64*64)){
-			
-			sub_colCount++;
-			SubVariable = 0;
-			
-			j = LastIndex;
-			//cout << j << ", ";
-			
-			
-		
+			}
 		}
-
-		if (SubCount < 64){
-			//Sub_Images[i] = Test_Image[j];
-			SubCount++;
-			
-		}
-		if (SubCount >= 64){
-			if (FirstLine == true){
-				LastIndex = i + 1; //sets next starting point 65 positions up, if this is the first run through
-				FirstLine = false;
-				}
-
-			j+=image_rows-sub_rows; // sets current index 2448-64 positions up to get the next pattern of the subimage //Possible subtract the overlap from this
-				
-			RowCount++; //counts up to row 65 for the pattern
-			SubCount = 0;
-		} 	
-		if (RowCount >= 65) {
-			RowCount = 0;
-			FirstLine = true;
-			
-		}
-
-		if (sub_colCount >= Dsub_colAmount && Dsub_colAmount - Isub_colAmount < 1){
-			double Dec = Dsub_colAmount - double(Isub_colAmount);
-			cout << "Dec " << Dec;
-	
-			sub_colCount = 0;
-			RowCount = 0;
-			SubCount = 0;
-		}
-
-	SubVariable++; 
-	}
-	
-
-	for (int i = 0; i < sub_rows*sub_cols*num_sub ; i++){
-		//cout << Sub_Images[i] << ", ";
-		}
-		
-	
-	*/
-	}
 	
 	
 	

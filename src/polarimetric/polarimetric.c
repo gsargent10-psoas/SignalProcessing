@@ -117,13 +117,83 @@ void computeintensity(double *s0,double *s1, double *s2, double *out_data, int w
 /* Return the number of sub images based on full image size, desired sub image size, and overlap. */
 int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int overlap)
 {
-	int x = (int)ceil(((double)image_x/(double)(sub_x-overlap)));
-	int y = (int)ceil(((double)image_y/(double)(sub_y-overlap)));
+	int x = (int)ceil(((double)image_x/(double)(sub_x-2*overlap)));
+	int y = (int)ceil(((double)image_y/(double)(sub_y-2*overlap)));
 	return x*y;
 }
 
 /* The stitching algroithim */
-void Stitching(){}
+void Stitching(){
+	/*
+	for (; ys < image_rows-1;){
+		xs = 0;
+		for (; xs < image_cols-1;){
+			//index = xs+ys*image_cols;
+			//cout << ys+xs*image_cols << ", "; 
+
+			//the first pixel
+			if (xs == 0 && ys == 0){
+				for (int r = ys; r <= ye; r++){
+					for (int c = xs; c <= xs; c++){
+						index = c+r*image_cols;
+						cout << Test_Image[index] << ", ";
+						//cout << c+r*image_cols << ", ";
+						//Sub_Images[] = Test_Image[index]; 
+					}
+				}
+			} 
+
+			//left edge
+			else if(xs == 0){
+
+			}
+
+			//top edge
+			else if(ys == 0){
+
+			//exceed pixel count on the bottom and right
+			}else if(xe > image_cols-1 && ye > image_rows-1){
+
+			//exceed pixel count on the right edge
+			}else if(xe > image_cols-1){
+
+			//exceed pixel count on the bottom edge
+			}else if(ye > image_cols-1){
+			
+			}else if(xs >= image_cols-1 && ys >= image_rows-1){
+				*error = 1;	
+			
+			//middle of the image
+			}else {
+				//for (int r = ys; r <= ye; r++){
+					//for (int c = xs; c <= xs; c++){
+					//	index = c+r*image_cols;
+						//cout << Test_Image[index] << ", ";
+						//Sub_Images[] = Test_Image[index]; 
+					//}
+				//}
+			}
+		
+	 		xs = xe-(2*overlap);
+			if(xs % 2 != 0){
+				xs = xs - 1;
+
+			}
+			
+			xe = xs + sub_cols - 1;
+			count = count+1;
+		
+		}
+		ys = ye-(2*overlap);	
+		
+		if(ys % 2 != 0){
+				ys = ys - 1;
+
+			}
+			ye = ys + sub_rows - 1;
+	}
+	*/
+}
 
 /* Generate sub images from full size image. Assume image is 2-dimensional.
 status: 0 = succes, 1 = success, but number of subimages generated does not equal num_sub
