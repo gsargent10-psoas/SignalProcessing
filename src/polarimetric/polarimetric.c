@@ -4,6 +4,16 @@
 
 /*** Internal Functions ***/
 
+/* Increment the step count for sub image generation and stitching. */
+void step22(int *sp, int *ep, int width, int overlap)
+{
+	/* sp = starting pixel, ep = ending pixel, width = width of image, overlap = desired overlap */
+	*sp = *ep-(2*overlap)+1;
+	if(*sp % 2 != 0){ // need to always start on an even pixel
+		*sp = *sp - 1;
+	}	
+	*ep = *sp + width - 1;
+}
 
 /*** External Functions ***/
 
@@ -196,9 +206,117 @@ void Stitching(){
 }
 
 /* Generate sub images from full size image. Assume image is 2-dimensional.
-status: 0 = succes, 1 = success, but number of subimages generated does not equal num_sub
+status: 0 = succes, 1 = success, but number of subimages generated < num_sub, 2 = success, but number of subimages generated > num_sub,
 -1 overlap is too large, -2 subimage is too large */
 void formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error)
 {
+	int xs = 0; int xe = sub_cols -1;
+	int ys = 0; int ye = sub_rows -1;
+	
+	int sxs = 0; 
+	int sys = 0; 
 
+	int index = 0;
+	int count = 0;
+	int subIndex = 0;
+
+	for (; ys < image_rows-1;){
+		xs = 0;
+		xe = sub_cols -1;
+		for (; xs < image_cols-1;){
+			if(count >= num_sub){
+				*error = 2;
+				return;
+			}
+			else if(xs >= image_cols-1 || ys >= image_rows-1){
+				*error = 1;	
+				return;
+			
+			}
+			//exceed pixel count on the bottom and right
+			else if(xe > image_cols-1 && ye > image_rows-1){
+				sxs = 0;
+				sys = 0;
+				for (int r = ys; r <= ye; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe; c++, sxs++){
+						if(c > image_cols-1 && r > image_rows-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							sub_images[subIndex] = 0.0;
+						}
+						else if (c > image_cols-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							sub_images[subIndex] = 0.0;
+						}
+						else if(r > image_rows-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							sub_images[subIndex] = 0.0;
+						}
+						else {
+							index = c+r*image_cols;
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							sub_images[subIndex] = image[index]; 
+						}
+					}
+				}		
+			}
+			//exceed pixel count on the right edge
+			else if(xe > image_cols-1){
+				sxs = 0;
+				sys = 0;
+				for (int r = ys; r <= ye; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe; c++, sxs++){
+						if(c > image_cols-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							sub_images[subIndex] = 0.0;
+						}
+						else{
+							
+							index = c+r*image_cols;
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							sub_images[subIndex] = image[index]; 
+						}
+					}
+				}
+			}
+			//exceed pixel count on the bottom edge
+			else if(ye > image_cols-1){
+				sxs = 0;
+				sys = 0;
+				for (int r = ys; r <= ye; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe; c++, sxs++){
+						if(r > image_rows-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;	
+							sub_images[subIndex] = 0.0;
+						}
+						else{
+							index = c+r*image_cols;
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							sub_images[subIndex] = image[index]; 
+						}
+					}
+				}
+			}
+			// all is good
+			else {
+				sxs = 0;
+				sys = 0;
+				for (int r = ys; r <= ye; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe; c++, sxs++){
+						index = c+r*image_cols;
+						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						sub_images[subIndex] = image[index]; 
+					}
+				}
+
+			}
+			count = count + 1;
+			step22(&xs,&xe,sub_cols,overlap);
+		}
+		step22(&ys,&ye,sub_rows,overlap);
+	}
+	*error = 0;	
 }
