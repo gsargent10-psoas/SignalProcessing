@@ -79,7 +79,6 @@ int main()
 	bool change = true;
 
 	for (int i = 0; i < image_rows*image_cols; i+=2){ //rows x columns
-	count+=2;
 	
 		if (count >= image_cols){	
 
@@ -107,7 +106,7 @@ int main()
 			TestImage[i] = 45;
 			TestImage[i+1] = 0;
 		}
-		
+		count+=2;
 		
 		}
 	
