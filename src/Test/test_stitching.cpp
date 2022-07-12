@@ -18,7 +18,7 @@ int main()
 	int* _error = &error; 
 	
 	double* TestImage = new double[image_x*image_y]; //rows * columns TestImage
-
+	double* StitchImage = new double[image_x*image_y];
 	
 	
 	int sub_depth = getNumberSubImages22(image_y,image_x,sub_y,sub_x,overlap);
@@ -29,6 +29,8 @@ int main()
 	formImage(TestImage, image_y, image_x);
 
 	formSubImage22(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, _error);
+	
+	Stitching(StitchImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, _error);
 
 	for (int s = 0; s < sub_depth; s++){
 		for (int r = 0; r < sub_y; r++){
@@ -41,6 +43,15 @@ int main()
 		cout <<endl;
 	}
 	cout << endl << "error: " << error <<endl;
+
+	for (int i = 0; i < image_x*image_y; i++){
+		cout << TestImage[i] << ", ";
+	} cout << endl;
+      cout << endl;
+
+	for (int i = 0; i < image_x*image_y; i++){
+		cout << StitchImage[i] << ", ";
+	} cout << endl;
 
 /*
 	string filename = "./test.pi";
@@ -56,24 +67,14 @@ int main()
 	closereader();
 	
 */
+	
 	return 0;
-	Stitching();
+	
 }
 	void formImage(double* TestImage, int image_rows, int image_cols){ 
 
-	
-	//Create A large Test Image with a 2x2 Pattern
-	//Create 64x64 SubImages
+	//generating a test Image 
 
-	//Stitch Subimages back into Large Image
-	//compare input(Image) large image and Output(stitch image) large Image to make sure its the same.
-
-	//Stitching algroithim is dependent on the Integer Pattern
-	//but if the Integer pattern is changed it impacts The entire Stitching and subimage process
-	
-	//Generating Main Image portion
-
-	
 	int pattern = 0;
 	int count = 0;
 	bool change = true;

@@ -13,21 +13,7 @@ int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int ove
     
 
 /* The stitching algroithim */
-void Stitching();
-
-//ONLY EDIT THE VERSION IN POLARIMETIC FOLDER
-//ONLY EDIT THE VERSION IN POLARIMETIC FOLDER
-//ONLY EDIT THE VERSION IN POLARIMETIC FOLDER
-//DOUBLE CHECK
-
-
-//code
-
-
-//ONLY EDIT THE VERSION IN POLARIMETIC FOLDER
-//ONLY EDIT THE VERSION IN POLARIMETIC FOLDER
-//ONLY EDIT THE VERSION IN POLARIMETIC FOLDER
-//DOUBLE CHEC
+void Stitching(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error);
 
 
 /* Generate sub images from full size image. Assume image is 2-dimensional.

@@ -133,78 +133,118 @@ int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int ove
 }
 
 /* The stitching algroithim */
-void Stitching(){
-	/*
+void Stitching(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error){
+	
+	int xs = 0; int xe = sub_cols -1;
+	int ys = 0; int ye = sub_rows -1;
+	
+	int sxs = 0; 
+	int sys = 0; 
+
+	int index = 0;
+	int count = 0;
+	int subIndex = 0;
+
 	for (; ys < image_rows-1;){
 		xs = 0;
+		xe = sub_cols -1;
 		for (; xs < image_cols-1;){
-			//index = xs+ys*image_cols;
-			//cout << ys+xs*image_cols << ", "; 
-
-			//the first pixel
-			if (xs == 0 && ys == 0){
-				for (int r = ys; r <= ye; r++){
-					for (int c = xs; c <= xs; c++){
-						index = c+r*image_cols;
-						cout << Test_Image[index] << ", ";
-						//cout << c+r*image_cols << ", ";
-						//Sub_Images[] = Test_Image[index]; 
+			if(count >= num_sub){
+				*error = 2;
+				return;
+			}
+			else if(xs >= image_cols-1 || ys >= image_rows-1){
+				*error = 1;	
+				return;
+			
+			}
+			//exceed pixel count on the bottom and right
+			else if(xe > image_cols-1 && ye > image_rows-1){
+				sxs = 0;
+				sys = 0;
+				for (int r = ys; r <= ye; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe; c++, sxs++){
+						if(c > image_cols-1 && r > image_rows-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							//sub_images[subIndex] = 0.0;
+						}
+						else if (c > image_cols-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							//sub_images[subIndex] = 0.0;
+						}
+						else if(r > image_rows-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							//sub_images[subIndex] = 0.0;
+						}
+						else {
+							index = c+r*image_cols;
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							image[index] = sub_images[subIndex]; 
+						}
+					}
+				}		
+			}
+			//exceed pixel count on the right edge
+			else if(xe > image_cols-1){
+				sxs = 0;
+				sys = 0;
+				for (int r = ys; r <= ye; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe; c++, sxs++){
+						if(c > image_cols-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							//sub_images[subIndex] = 0.0;
+						}
+						else{
+							
+							index = c+r*image_cols;
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							image[index] = sub_images[subIndex]; 
+						}
 					}
 				}
-			} 
-
-			//left edge
-			else if(xs == 0){
-
 			}
-
-			//top edge
-			else if(ys == 0){
-
-			//exceed pixel count on the bottom and right
-			}else if(xe > image_cols-1 && ye > image_rows-1){
-
-			//exceed pixel count on the right edge
-			}else if(xe > image_cols-1){
-
 			//exceed pixel count on the bottom edge
-			}else if(ye > image_cols-1){
-			
-			}else if(xs >= image_cols-1 && ys >= image_rows-1){
-				*error = 1;	
-			
-			//middle of the image
-			}else {
-				//for (int r = ys; r <= ye; r++){
-					//for (int c = xs; c <= xs; c++){
-					//	index = c+r*image_cols;
-						//cout << Test_Image[index] << ", ";
-						//Sub_Images[] = Test_Image[index]; 
-					//}
-				//}
+			else if(ye > image_cols-1){
+				sxs = 0;
+				sys = 0;
+				for (int r = ys; r <= ye; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe; c++, sxs++){
+						if(r > image_rows-1){
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;	
+							//sub_images[subIndex] = 0.0;
+						}
+						else{
+							index = c+r*image_cols;
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							image[index] = sub_images[subIndex]; 
+						}
+					}
+				}
 			}
-		
-	 		xs = xe-(2*overlap);
-			if(xs % 2 != 0){
-				xs = xs - 1;
+			// all is good
+			else {
+				sxs = 0;
+				sys = 0;
+				for (int r = ys; r <= ye; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe; c++, sxs++){
+						index = c+r*image_cols;
+						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						image[index] = sub_images[subIndex]; 
+					}
+				}
 
 			}
-			
-			xe = xs + sub_cols - 1;
-			count = count+1;
-		
+			count = count + 1;
+			step22(&xs,&xe,sub_cols,overlap);
 		}
-		ys = ye-(2*overlap);	
-		
-		if(ys % 2 != 0){
-				ys = ys - 1;
-
-			}
-			ye = ys + sub_rows - 1;
+		step22(&ys,&ye,sub_rows,overlap);
 	}
-	*/
+	*error = 0;	
 }
-
 /* Generate sub images from full size image. Assume image is 2-dimensional.
 status: 0 = succes, 1 = success, but number of subimages generated < num_sub, 2 = success, but number of subimages generated > num_sub,
 -1 overlap is too large, -2 subimage is too large */
