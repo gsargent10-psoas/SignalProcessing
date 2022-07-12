@@ -27,10 +27,8 @@ int main()
 	double* SubImages = new double[sub_x*sub_y*sub_depth]; //rows * columns SubImage
 	
 	formImage(TestImage, image_y, image_x);
-
 	formSubImage22(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, _error);
-	
-	Stitching(StitchImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, _error);
+	Stitching(StitchImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, _error); //Passing in the empty Stitch image
 
 	for (int s = 0; s < sub_depth; s++){
 		for (int r = 0; r < sub_y; r++){
