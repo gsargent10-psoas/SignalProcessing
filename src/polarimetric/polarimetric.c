@@ -158,24 +158,90 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 				return;
 			
 			}
+			//top left corner 
+			else if (xs == 0 && ys == 0){
+				sys = 0;
+				for (int r = ys; r <= ye-overlap; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe-overlap; c++, sxs++){
+						index = c+r*image_cols;
+						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						image[index] = sub_images[subIndex]; 
+					}
+				}	
+			}
+			//top edge
+			else if (ys == 0 && xe <= image_cols-1){
+				sys = 0;
+				for (int r = ys; r <= ye-overlap; r++, sys++){
+					sxs = 0+overlap;
+					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
+						index = c+r*image_cols;
+						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						image[index] = sub_images[subIndex]; 
+					}
+				}	
+			}
+			//top right corner
+			else if(ys == 0 && xe > image_cols-1){
+				sys = 0;
+				for (int r = ys; r <= ye-overlap; r++, sys++){
+					sxs = 0+overlap;
+					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
+						if(c > image_cols-1){
+							//do nothing
+						}
+						else{
+							index = c+r*image_cols;
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							image[index] = sub_images[subIndex]; 
+						}
+					}
+				}
+			}
+			//left edge
+			else if(xs == 0 && ye <= image_rows-1){
+				sys = 0+overlap;
+				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe-overlap; c++, sxs++){
+						index = c+r*image_cols;
+						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						image[index] = sub_images[subIndex]; 
+					}
+				}
+			}
+			//bottom left corner
+			else if(xs == 0 && ye > image_rows-1){
+				sys = 0+overlap;
+				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
+					sxs = 0;
+					for (int c = xs; c <= xe-overlap; c++, sxs++){
+						if(r > image_rows-1){
+							//do nothing
+						}
+						else{
+							index = c+r*image_cols;
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							image[index] = sub_images[subIndex]; 
+						}
+					}
+				}
+			}
 			//exceed pixel count on the bottom and right
 			else if(xe > image_cols-1 && ye > image_rows-1){
-				sxs = 0;
-				sys = 0;
-				for (int r = ys; r <= ye; r++, sys++){
-					sxs = 0;
-					for (int c = xs; c <= xe; c++, sxs++){
+				sys = 0+overlap;
+				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
+					sxs = 0+overlap;
+					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
 						if(c > image_cols-1 && r > image_rows-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							//sub_images[subIndex] = 0.0;
+							//do nothing
 						}
 						else if (c > image_cols-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							//sub_images[subIndex] = 0.0;
+							//do nothing
 						}
 						else if(r > image_rows-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							//sub_images[subIndex] = 0.0;
+							//do nothing
 						}
 						else {
 							index = c+r*image_cols;
@@ -187,14 +253,12 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 			}
 			//exceed pixel count on the right edge
 			else if(xe > image_cols-1){
-				sxs = 0;
-				sys = 0;
-				for (int r = ys; r <= ye; r++, sys++){
-					sxs = 0;
-					for (int c = xs; c <= xe; c++, sxs++){
+				sys = 0+overlap;
+				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
+					sxs = 0+overlap;
+					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
 						if(c > image_cols-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							//sub_images[subIndex] = 0.0;
+							//do nothing
 						}
 						else{
 							
@@ -207,14 +271,12 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 			}
 			//exceed pixel count on the bottom edge
 			else if(ye > image_cols-1){
-				sxs = 0;
-				sys = 0;
-				for (int r = ys; r <= ye; r++, sys++){
-					sxs = 0;
-					for (int c = xs; c <= xe; c++, sxs++){
+				sys = 0+overlap;
+				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
+					sxs = 0+overlap;
+					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
 						if(r > image_rows-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;	
-							//sub_images[subIndex] = 0.0;
+							//do nothing
 						}
 						else{
 							index = c+r*image_cols;
@@ -226,11 +288,10 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 			}
 			// all is good
 			else {
-				sxs = 0;
-				sys = 0;
-				for (int r = ys; r <= ye; r++, sys++){
-					sxs = 0;
-					for (int c = xs; c <= xe; c++, sxs++){
+				sys = 0+overlap;
+				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
+					sxs = 0+overlap;
+					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
 						index = c+r*image_cols;
 						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 						image[index] = sub_images[subIndex]; 
@@ -275,7 +336,6 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 			}
 			//exceed pixel count on the bottom and right
 			else if(xe > image_cols-1 && ye > image_rows-1){
-				sxs = 0;
 				sys = 0;
 				for (int r = ys; r <= ye; r++, sys++){
 					sxs = 0;
@@ -302,7 +362,6 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 			}
 			//exceed pixel count on the right edge
 			else if(xe > image_cols-1){
-				sxs = 0;
 				sys = 0;
 				for (int r = ys; r <= ye; r++, sys++){
 					sxs = 0;
@@ -322,7 +381,6 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 			}
 			//exceed pixel count on the bottom edge
 			else if(ye > image_cols-1){
-				sxs = 0;
 				sys = 0;
 				for (int r = ys; r <= ye; r++, sys++){
 					sxs = 0;
@@ -341,7 +399,6 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 			}
 			// all is good
 			else {
-				sxs = 0;
 				sys = 0;
 				for (int r = ys; r <= ye; r++, sys++){
 					sxs = 0;

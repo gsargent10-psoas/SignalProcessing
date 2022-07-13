@@ -5,6 +5,7 @@ extern "C"
 }
 #include <iostream>
 #include <string>
+#include <cmath>
 
 
 using namespace std;
@@ -13,13 +14,17 @@ void formImage(double* TestImage, int image_rows, int image_cols);
 
 int main()
 {
-	int image_x = 12; int image_y = 12; int sub_x = 10; int sub_y = 10; int overlap = 2;
+	int image_x = 2000; int image_y = 2448; int sub_x = 64; int sub_y = 64; int overlap = 2;
 	int error = -99;
 	int* _error = &error; 
 	
 	double* TestImage = new double[image_x*image_y]; //rows * columns TestImage
 	double* StitchImage = new double[image_x*image_y];
 	
+	for(int i = 0; i < image_x*image_y; i++){
+		StitchImage[i] = 0.0;
+		TestImage[i] = 0.0;
+	}
 	
 	int sub_depth = getNumberSubImages22(image_y,image_x,sub_y,sub_x,overlap);
 	cout << sub_depth << endl;
@@ -28,8 +33,11 @@ int main()
 	
 	formImage(TestImage, image_y, image_x);
 	formSubImage22(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, _error);
+	cout << endl << "formSubImage22 error: " << error <<endl;
 	Stitching(StitchImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, _error); //Passing in the empty Stitch image
+	cout << endl << "Stitching error: " << error <<endl;
 
+/*
 	for (int s = 0; s < sub_depth; s++){
 		for (int r = 0; r < sub_y; r++){
 			for (int c = 0; c < sub_x; c++){
@@ -40,17 +48,27 @@ int main()
 		cout <<endl;
 		cout <<endl;
 	}
-	cout << endl << "error: " << error <<endl;
-
+*/
+/*
 	for (int i = 0; i < image_x*image_y; i++){
 		cout << TestImage[i] << ", ";
-	} cout << endl;
-      cout << endl;
-
+	} 
+	cout << endl;
+    cout << endl;
+*/
+	double check = 0.0;
 	for (int i = 0; i < image_x*image_y; i++){
-		cout << StitchImage[i] << ", ";
-	} cout << endl;
-
+		//cout << StitchImage[i] << ", ";
+		check = check + abs((int)TestImage[i] - (int)StitchImage[i]);
+		if(isnan(check)){
+			cout << StitchImage[i] << ", " << TestImage[i] <<endl;
+			cout << "i = " << i << endl;
+			break;
+		}
+	} 
+	cout << endl;
+	cout << "check: " << check << endl;
+	
 /*
 	string filename = "./test.pi";
 	double data[4] = {1.0, 2.0, 3.0, 4.0};
@@ -96,17 +114,15 @@ int main()
 		count = 0;
 		change = true;
 	}
-
 		if (pattern == 0){
-			TestImage[i] = 90;
-			TestImage[i+1] = 135;
+			TestImage[i] = rand() % 255 + 1;
+			TestImage[i+1] = rand() % 255 + 1;
 		}
 		if (pattern == 1){
-			TestImage[i] = 45;
-			TestImage[i+1] = 0;
+			TestImage[i] = rand() % 255 + 1;
+			TestImage[i+1] = rand() % 255 + 1;
 		}
 		count+=2;
-		
 		}
 	
 	int TestImageValues = 0; 
