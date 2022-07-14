@@ -14,23 +14,21 @@ void formImage(double* TestImage, int image_rows, int image_cols);
 
 int main()
 {
-	int image_x = 2000; int image_y = 2448; int sub_x = 64; int sub_y = 64; int overlap = 2;
+	int image_y = 2048; int image_x = 2448; int sub_x = 64; int sub_y = 64; int overlap = 2;
 	int error = -99;
 	int* _error = &error; 
-	
+
+
 	double* TestImage = new double[image_x*image_y]; //rows * columns TestImage
 	double* StitchImage = new double[image_x*image_y];
-	
-	for(int i = 0; i < image_x*image_y; i++){
-		StitchImage[i] = 0.0;
-		TestImage[i] = 0.0;
-	}
 	
 	int sub_depth = getNumberSubImages22(image_y,image_x,sub_y,sub_x,overlap);
 	cout << sub_depth << endl;
 	cout << sub_x*sub_y*sub_depth << endl;
-	double* SubImages = new double[sub_x*sub_y*sub_depth]; //rows * columns SubImage
 	
+	double* SubImages = new double[sub_x*sub_y*sub_depth]; //rows * columns SubImage
+
+
 	formImage(TestImage, image_y, image_x);
 	formSubImage22(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, _error);
 	cout << endl << "formSubImage22 error: " << error <<endl;
@@ -49,13 +47,9 @@ int main()
 		cout <<endl;
 	}
 */
-/*
-	for (int i = 0; i < image_x*image_y; i++){
-		cout << TestImage[i] << ", ";
-	} 
-	cout << endl;
+
     cout << endl;
-*/
+
 	double check = 0.0;
 	for (int i = 0; i < image_x*image_y; i++){
 		//cout << StitchImage[i] << ", ";
@@ -64,6 +58,10 @@ int main()
 			cout << StitchImage[i] << ", " << TestImage[i] <<endl;
 			cout << "i = " << i << endl;
 			break;
+		}
+		if(StitchImage[i] != TestImage[i]){
+			cout << " Stitch index " << StitchImage[i] << " TestImage " << TestImage[i] << endl << " index is " << i;
+
 		}
 	} 
 	cout << endl;
@@ -113,6 +111,7 @@ int main()
 			}		
 		count = 0;
 		change = true;
+		
 	}
 		if (pattern == 0){
 			TestImage[i] = rand() % 255 + 1;
@@ -124,16 +123,17 @@ int main()
 		}
 		count+=2;
 		}
-	
+
 	int TestImageValues = 0; 
+
+
 	for (int i = 0 ; i < image_rows*image_cols; i++){
 		 TestImageValues++;
-		 //cout << TestImage[i] << ", ";
+		 cout << TestImage[i] << ", ";
 
 	}
-	
-	
-	
+	//delete(TestImage);	
+
 	cout <<"there are " << TestImageValues << " values in the Test Image" << endl;
 	}
 	
