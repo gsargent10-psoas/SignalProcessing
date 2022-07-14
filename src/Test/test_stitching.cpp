@@ -18,24 +18,41 @@ int main()
 	int error = -99;
 	int* _error = &error; 
 
-
-	double* TestImage = new double[image_x*image_y]; //rows * columns TestImage
-	double* StitchImage = new double[image_x*image_y];
-	
 	int sub_depth = getNumberSubImages22(image_y,image_x,sub_y,sub_x,overlap);
 	cout << sub_depth << endl;
 	cout << sub_x*sub_y*sub_depth << endl;
-	
-	double* SubImages = new double[sub_x*sub_y*sub_depth]; //rows * columns SubImage
 
+	double* SubImages = new double[sub_x*sub_y*sub_depth];
+	for (int i = 0; i < sub_x*sub_y*sub_depth; i++){
+			SubImages[i] = 0.0;
+	}
+
+	double* TestImage = new double[image_x*image_y]; //rows * columns TestImage
+	for (int i = 0; i < image_y*image_x; i++){
+		TestImage[i] = 0.0;
+	}
 
 	formImage(TestImage, image_y, image_x);
+	
+	
 	formSubImage22(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, _error);
 	cout << endl << "formSubImage22 error: " << error <<endl;
+
+	for (int i = 0; i < sub_x*sub_y*sub_depth; i++){
+		//cout << SubImages[i] << ", ";
+	}
+
+	double* StitchImage = new double[image_x*image_y];
+	for (int i = 0; i < sub_x*sub_y*sub_depth; i++){
+			StitchImage[i] = 0.0;
+	}
+
 	Stitching(StitchImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, _error); //Passing in the empty Stitch image
 	cout << endl << "Stitching error: " << error <<endl;
-
-/*
+	//delete(StitchImage);
+	//delete(SubImages);
+	
+	/*
 	for (int s = 0; s < sub_depth; s++){
 		for (int r = 0; r < sub_y; r++){
 			for (int c = 0; c < sub_x; c++){
@@ -46,10 +63,10 @@ int main()
 		cout <<endl;
 		cout <<endl;
 	}
-*/
+
+	*/
 
     cout << endl;
-
 	double check = 0.0;
 	for (int i = 0; i < image_x*image_y; i++){
 		//cout << StitchImage[i] << ", ";
@@ -66,6 +83,8 @@ int main()
 	} 
 	cout << endl;
 	cout << "check: " << check << endl;
+	
+
 	
 /*
 	string filename = "./test.pi";
@@ -127,14 +146,14 @@ int main()
 	int TestImageValues = 0; 
 
 
-	for (int i = 0 ; i < image_rows*image_cols; i++){
-		 TestImageValues++;
-		 cout << TestImage[i] << ", ";
+	//for (int i = 0 ; i < image_rows*image_cols; i++){
+		 //TestImageValues++;
+		 //cout << TestImage[i] << ", ";
 
-	}
-	//delete(TestImage);	
+	//}
+	
 
-	cout <<"there are " << TestImageValues << " values in the Test Image" << endl;
+	//cout <<"there are " << TestImageValues << " values in the Test Image" << endl;
 	}
 	
 	

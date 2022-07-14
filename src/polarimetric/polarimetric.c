@@ -167,6 +167,7 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 						index = c+r*image_cols;
 						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 						image[index] = sub_images[subIndex]; 
+						
 					}
 				}	
 			}
@@ -356,6 +357,7 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 							index = c+r*image_cols;
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							sub_images[subIndex] = image[index]; 
+							
 						}
 					}
 				}		
@@ -375,6 +377,7 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 							index = c+r*image_cols;
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							sub_images[subIndex] = image[index]; 
+							
 						}
 					}
 				}
@@ -406,6 +409,7 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 						index = c+r*image_cols;
 						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 						sub_images[subIndex] = image[index]; 
+						
 					}
 				}
 
@@ -415,5 +419,6 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 		}
 		step22(&ys,&ye,sub_rows,overlap);
 	}
+	free (image);
 	*error = 0;	
 }
