@@ -14,7 +14,7 @@ void formImage(double* TestImage, int image_rows, int image_cols);
 
 int main()
 {
-	int image_y = 300; int image_x = 300; int sub_x = 64; int sub_y = 64; int overlap = 8;
+	int image_y = 2048; int image_x = 2448; int sub_x = 64; int sub_y = 64; int overlap = 8;
 	int error = -99;
 	int* _error = &error; 
 	double* TestImage; double* SubImages; double* StitchImage;
@@ -34,7 +34,7 @@ int main()
 	}
 
 	StitchImage = new double[image_x*image_y];
-	for (int i = 0; i < sub_x*sub_y; i++){
+	for (int i = 0; i < image_y*image_x; i++){
 			StitchImage[i] = 0.0;
 	}
 
@@ -124,11 +124,14 @@ int main()
 	void formImage(double* TestImage, int image_rows, int image_cols){ 
 
 	//generating a test Image 
+	for (int i = 0; i < image_rows*image_cols; i++){
+		TestImage[i] = rand() % 255 + 1;
+	}
 
 	int pattern = 0;
 	int count = 0;
 	bool change = true;
-
+/*
 	for (int i = 0; i < image_rows*image_cols; i+=2){ //rows x columns
 	
 		if (count >= image_cols){	
@@ -161,7 +164,7 @@ int main()
 		}
 
 	int TestImageValues = 0; 
-
+	*/
 
 	//for (int i = 0 ; i < image_rows*image_cols; i++){
 		 //TestImageValues++;
