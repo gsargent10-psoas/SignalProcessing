@@ -158,6 +158,7 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 				return;
 			
 			}
+			
 			//top left corner 
 			else if (xs == 0 && ys == 0){
 				sys = 0;
@@ -166,11 +167,16 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 					for (int c = xs; c <= xe-overlap; c++, sxs++){
 						index = c+r*image_cols;
 						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						if (subIndex >= sub_cols*sub_rows*num_sub)
+						{
+							*error = subIndex;	
+							return;
+						}
 						image[index] = sub_images[subIndex]; 
-						
 					}
 				}	
 			}
+			
 			//top edge
 			else if (ys == 0 && xe <= image_cols-1){
 				sys = 0;
@@ -179,10 +185,16 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
 						index = c+r*image_cols;
 						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						if (subIndex >= sub_cols*sub_rows*num_sub)
+						{
+							*error = subIndex;	
+							return;
+						}
 						image[index] = sub_images[subIndex]; 
 					}
 				}	
 			}
+			
 			//top right corner
 			else if(ys == 0 && xe > image_cols-1){
 				sys = 0;
@@ -195,6 +207,11 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 						else{
 							index = c+r*image_cols;
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
 							image[index] = sub_images[subIndex]; 
 						}
 					}
@@ -208,6 +225,11 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 					for (int c = xs; c <= xe-overlap; c++, sxs++){
 						index = c+r*image_cols;
 						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
 						image[index] = sub_images[subIndex]; 
 					}
 				}
@@ -224,11 +246,17 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 						else{
 							index = c+r*image_cols;
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
 							image[index] = sub_images[subIndex]; 
 						}
 					}
 				}
 			}
+			
 			//exceed pixel count on the bottom and right
 			else if(xe > image_cols-1 && ye > image_rows-1){
 				sys = 0+overlap;
@@ -247,11 +275,17 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 						else {
 							index = c+r*image_cols;
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
 							image[index] = sub_images[subIndex]; 
 						}
 					}
 				}		
 			}
+			
 			//exceed pixel count on the right edge
 			else if(xe > image_cols-1){
 				sys = 0+overlap;
@@ -265,6 +299,11 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 							
 							index = c+r*image_cols;
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
 							image[index] = sub_images[subIndex]; 
 						}
 					}
@@ -282,11 +321,17 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 						else{
 							index = c+r*image_cols;
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
 							image[index] = sub_images[subIndex]; 
 						}
 					}
 				}
 			}
+			
 			// all is good
 			else {
 				sys = 0+overlap;
@@ -294,8 +339,19 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 					sxs = 0+overlap;
 					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
 						index = c+r*image_cols;
-						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-						image[index] = sub_images[subIndex]; 
+						if (index >= image_cols*image_rows)
+						{
+							// do nothing
+						}
+						else{
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
+							image[index] = sub_images[subIndex]; 
+						}
 					}
 				}
 
@@ -343,19 +399,39 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 					for (int c = xs; c <= xe; c++, sxs++){
 						if(c > image_cols-1 && r > image_rows-1){
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
 							sub_images[subIndex] = 0.0;
 						}
 						else if (c > image_cols-1){
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
 							sub_images[subIndex] = 0.0;
 						}
 						else if(r > image_rows-1){
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
 							sub_images[subIndex] = 0.0;
 						}
 						else {
 							index = c+r*image_cols;
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
 							sub_images[subIndex] = image[index]; 
 							
 						}
@@ -370,12 +446,22 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 					for (int c = xs; c <= xe; c++, sxs++){
 						if(c > image_cols-1){
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
 							sub_images[subIndex] = 0.0;
 						}
 						else{
 							
 							index = c+r*image_cols;
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
 							sub_images[subIndex] = image[index]; 
 							
 						}
@@ -390,11 +476,21 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 					for (int c = xs; c <= xe; c++, sxs++){
 						if(r > image_rows-1){
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;	
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
 							sub_images[subIndex] = 0.0;
 						}
 						else{
 							index = c+r*image_cols;
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
 							sub_images[subIndex] = image[index]; 
 						}
 					}
@@ -408,6 +504,11 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 					for (int c = xs; c <= xe; c++, sxs++){
 						index = c+r*image_cols;
 						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						if (subIndex >= sub_cols*sub_rows*num_sub)
+						{
+							*error = subIndex;	
+							return;
+						}
 						sub_images[subIndex] = image[index]; 
 						
 					}
