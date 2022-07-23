@@ -75,12 +75,12 @@ int main()
 		//cout << StitchImage[i] << ", ";
 		check = check + abs((int)TestImage[i] - (int)StitchImage[i]);
 		if(isnan(check)){
-			cout << StitchImage[i] << ", " << TestImage[i] <<endl;
-			cout << "i = " << i << endl;
+			//cout << StitchImage[i] << ", " << TestImage[i] <<endl;
+			//cout << "i = " << i << endl;
 			break;
 		}
 		if(StitchImage[i] != TestImage[i]){
-			cout << " Stitch index " << StitchImage[i] << " TestImage " << TestImage[i] << endl << " index is " << i;
+			//cout << " Stitch index " << StitchImage[i] << " TestImage " << TestImage[i] << endl << " index is " << i;
 
 		}
 	} 
@@ -105,8 +105,8 @@ int main()
 */
 
 
-	//delete[] TestImage;
-	//TestImage=NULL;
+	delete[] TestImage;
+	TestImage=NULL;
 	delete[] SubImages;
 	SubImages=NULL;
 	delete[] StitchImage;

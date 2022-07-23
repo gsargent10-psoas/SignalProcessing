@@ -330,8 +330,7 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 						}
 					}
 				}
-			}
-			
+			}	
 			// all is good
 			else {
 				sys = 0+overlap;
@@ -503,13 +502,19 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 					sxs = 0;
 					for (int c = xs; c <= xe; c++, sxs++){
 						index = c+r*image_cols;
-						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-						if (subIndex >= sub_cols*sub_rows*num_sub)
+						if (index >= image_cols*image_rows)
 						{
-							*error = subIndex;	
-							return;
+							// do nothing
 						}
-						sub_images[subIndex] = image[index]; 
+						else{
+							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							if (subIndex >= sub_cols*sub_rows*num_sub)
+							{
+								*error = subIndex;	
+								return;
+							}
+							sub_images[subIndex] = image[index]; 
+						}
 						
 					}
 				}
