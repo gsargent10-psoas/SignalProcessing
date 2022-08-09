@@ -26,10 +26,10 @@ CPIFile::CPIFile(std::string &filename){
 	zeroOut();
 	int state = readPIHeaderFile(filename);
 
-	/*if (debug_mode){
+	if (debug_mode){
 		if (state < 1) cout << "Header file read state: " << state << "\n";
 		else cout << "Header file read successfully." << "\n";
-	}*/
+	}
 }
 
 //Zeros out all member variables.
@@ -47,15 +47,31 @@ void CPIFile::zeroOut(){
 	m_description = "";
 	PI_SENSOR_TYPE m_sensor_type = UNKNOWN_SENSOR_TYPE;
 	PI_SENSOR_NAME m_sensor_name = UNKNOWN_SENSOR_NAME;
-	m_superpixel_size.clear();
-	m_ugrid_polarizer_orientations.clear();
+    m_lens_focal_length = 0;
+    m_lens_fnumber = 0;
+    m_spectral_channels = 0;
+    m_polarimetric_channels = 0;
+    m_adc_bit_depth = 0;
+    m_exposure_time = 0;
+    m_gain = 0;
+    m_gamma = 0;
+    m_nframes_averaged = 0;
+    m_timestamp = "";
+    m_ugrid_superpixel_size.clear();
+    m_polarizer_orientations.clear();
+    m_polarizer_spectral_orientations = "";
 	m_flatfield_unit = UNKNOWN_RADIOMETRIC_UNIT;
 	m_flatfield_values.clear();
 	bool m_flatfield_source_type = true;
 	double m_flatfield_center_wavelength = 0.0;
 	WAVELENGTH_UNIT m_flatfield_wavelength_unit = UNKNOWN_WAVELENGTH_UNIT;
-	double m_blackbody_emissivity = 1.0;
-	
+    double m_blackbody_emissivity = 0.0;
+    m_turntable_azimuth = -1000;
+    m_solar_azimuth = -1000;
+    m_solar_elevation = -1000;
+    m_camera_azimuth = -1000;
+    m_camera_elevation = -1000;
+
 	//Boolean Flags
 	m_valid_header = false;
 	m_frames_valid = false;
@@ -84,14 +100,31 @@ void CPIFile::zeroOut(){
 	m_known_parameters.push_back("description");
 	m_known_parameters.push_back("sensor type");
 	m_known_parameters.push_back("sensor name");
-	m_known_parameters.push_back("superpixel size");
-	m_known_parameters.push_back("superpixel polarizer orientations");
+    m_known_parameters.push_back("lens focal length");
+    m_known_parameters.push_back("lens fnumber");
+    m_known_parameters.push_back("pixel pitch");
+    m_known_parameters.push_back("spectral channels");
+    m_known_parameters.push_back("polarimetric channels");
+    m_known_parameters.push_back("adc bit depth");
+    m_known_parameters.push_back("exposure time");
+    m_known_parameters.push_back("gain");
+    m_known_parameters.push_back("gamma");
+    m_known_parameters.push_back("number frames averaged");
+    m_known_parameters.push_back("time stamp");
+    m_known_parameters.push_back("microgrid superpixel size");
+    m_known_parameters.push_back("polarizer orientations");
+    m_known_parameters.push_back("polarizer spectral orientations");
 	m_known_parameters.push_back("flatfield values");
 	m_known_parameters.push_back("flatfield unit");
 	m_known_parameters.push_back("flatfield source type");
 	m_known_parameters.push_back("flatfield center wavelength");
 	m_known_parameters.push_back("flatfield center wavelength unit");
 	m_known_parameters.push_back("blackbody emissivity");
+    m_known_parameters.push_back("camera azimuth");
+    m_known_parameters.push_back("camera elevation");
+    m_known_parameters.push_back("turntable azimuth");
+    m_known_parameters.push_back("solar azimuth");
+    m_known_parameters.push_back("solar elevation");
 
 	debug_mode = false;
 }
@@ -157,13 +190,12 @@ int CPIFile::readPIHeaderFile(std::string& filename){
 
 	//If Header is Valid, set the swap_data flag and return success
 	if (isInputHeaderValid()){
-		//if (debug_mode) cout << "Input header is valid.\n";
+		if (debug_mode) cout << "Input header is valid.\n";
 		if (((getByteOrder() == 1) && isMachineLittleEndian()) || ((getByteOrder() == 0) && !isMachineLittleEndian())) setSwapData(true);
 		else setSwapData(false);
 		return 1;
 	}
-	else{ //if (debug_mode) cout << "Input header is not valid.\n"; 
-		return -5; }
+	else{ if (debug_mode) cout << "Input header is not valid.\n"; return -5; }
 
 }
 
@@ -192,16 +224,17 @@ int CPIFile::writePIHeaderFile(){
 			//Write Out Description Field
 			if (m_description != "") fout << "description = {" << getDescription().c_str() << "}" << endl;
 
+            if (m_timestamp != "")  fout << "time stamp = {" << getTimeStamp().c_str() << "}" << endl;
 
 			//BEGIN REQUIRED PARAMETERS ******************
 
-			//Write Out Number of Bands
+            //Write Out pixel width
 			fout << "width = " << getWidth() << endl;
 
-			//Write Out Number of Samples
+            //Write Out pixel height
 			fout << "height = " << getHeight() << endl;
 
-			//Write Out Number of Lines
+            //Write Out number of frames
 			fout << "frames = " << getNumberOfFrames() << endl;
 
 			//Write Out ENVI Data Type
@@ -233,6 +266,9 @@ int CPIFile::writePIHeaderFile(){
 			case ENVI_UNSIGNED_I64:
 				fout << "data type = 15" << endl;
 				break;
+            case UNKNOWN_DATA_TYPE:
+                fout << "data type = -1" << endl;
+                break;
 			}
 
 			//Write Out Byte Order
@@ -243,9 +279,12 @@ int CPIFile::writePIHeaderFile(){
 			case UNKNOWN_PRODUCT_TYPE:
 				fout << "product type = Unknown Product Type" << endl;
 				break;
-			case RAW:
-				fout << "product type = Raw" << endl;
+            case INTENSITY:
+                fout << "product type = intensity" << endl;
 				break;
+            case SPATIALLY_MODULATED_INTENSITY:
+                fout << "product type = spatially modulated intensity" << endl;
+                break;
 			case S0:
 				fout << "product type = s0" << endl;
 				break;
@@ -255,12 +294,21 @@ int CPIFile::writePIHeaderFile(){
 			case S2:
 				fout << "product type = s2" << endl;
 				break;
+            case LINEAR_STOKES:
+                fout << "product type = linear stokes" << endl;
+                break;
+            case LINEAR_STOKES_DOLP_AOP:
+                fout << "product type = linear stokes dolp aop" << endl;
+                break;
 			case DOLP:
 				fout << "product type = DoLP" << endl;
 				break;
 			case AOP:
 				fout << "product type = AoP" << endl;
 				break;
+            case PCM:
+                fout << "product type = PCM" << endl;
+                break;
 			case TYOCOLOR:
 				fout << "product type = TyoColor" << endl;
 				break;
@@ -272,12 +320,6 @@ int CPIFile::writePIHeaderFile(){
 				break;
 			case BAD_PIXEL_MAP:
 				fout << "product type = Bad Pixel Map" << endl;
-				break;
-			case INTENSITY:
-				fout << "product type = intensity" << endl;
-				break;
-			case STOKES:
-				fout << "product type = stokes" << endl;
 				break;
 			}
 
@@ -292,7 +334,18 @@ int CPIFile::writePIHeaderFile(){
 				case DIVISION_OF_APERTURE:
 					fout << "sensor type = Division of Aperture" << endl;
 					break;
-				}
+                case DIVISION_OF_TIME:
+                    fout << "sensor type = Division of Time" << endl;
+                    break;
+                case DIVISION_OF_AMPLITUDE:
+                    fout << "sensor type = Division of Amplitude" << endl;
+                    break;
+                case NON_POLARIMETRIC_SENSOR:
+                    fout << "sensor type = Non-polarimetric Sensor" << endl;
+                    break;
+                case UNKNOWN_SENSOR_TYPE:
+                    break;
+                }
 			}
 
 			if (getSensorName() != UNKNOWN_SENSOR_NAME){
@@ -307,51 +360,129 @@ int CPIFile::writePIHeaderFile(){
 				case TYO_LWIRuG:
 					fout << "sensor name = UA LWIR Microgrid" << endl;
 					break;
-				case PYXIS:
-					fout << "sensor name = PYXIS" << endl;
+                case PYXIS_LWIR_MONO_UGRID:
+                    fout << "sensor name = Pyxis LWIR Monochromatic microgrid" << endl;
 					break;
-				case FLIR_MONO_UGRID:
-					fout << "sensor name = FLIR MONO UGRID" << endl;
+                case CORVIS_LWIR_MONO_DOT:
+                    fout << "sensor name = Corvis LWIR Monochromatic DoT" << endl;
+                    break;
+                case BLACKFLY_VISIBLE_MONO_UGRID:
+                    fout << "sensor name = Blackfly Visible Monochromatic Microgrid" << endl;
 					break;
-				case FLIR_RGB_UGRID:
-					fout << "sensor name = FLIR RGB UGRID" << endl;
+                case BLACKFLY_VISIBLE_RGB_UGRID:
+                    fout << "sensor name = Blackfly Visible RGB Microgrid" << endl;
 					break;
-				case FLIR_MONO_DOT:
-					fout << "sensor name = FLIR MONO DOT" << endl;
+                case BLACKFLY_VISIBLE_MONO_DOT:
+                    fout << "sensor name = Blackfly Visible Monochromatic DoT" << endl;
 					break;
+                case UNKNOWN_SENSOR_NAME:
+                    break;
 				}
 			}
 
-			//Only write these out if sensor is a microgrid
-			if (getSensorType() == DIVISION_OF_FOCAL_PLANE){
+            //Number of camera spectral channels
+            if(getNumberSpectralChannels()>0){
+                fout << "spectral channels = " << getNumberSpectralChannels() << endl;
+            }
 
-				//Write out super pixel size and orientations
-				if (m_superpixel_size.size() == 2){
+            //Number of camera polarimetric channels
+            if(getNumberPolarimetricChannels()>0){
+                fout << "polarimetric channels = " << getNumberPolarimetricChannels() << endl;
+            }
 
-					//Write out super pixel size
-					fout << "superpixel size = " << "{" << m_superpixel_size[0] << ", " << m_superpixel_size[1] << "}" << endl;
+            //ADC Bit Depth of Camera
+            if(getADCBitDepth()>0){
+                fout << "adc bit depth = " << getADCBitDepth() << endl;
+            }
 
-					std::vector<double> dT;
-					dT.clear(); getMicrogridPolarizerOrientations(dT);
-					if (dT.size() == m_superpixel_size[0] * m_superpixel_size[1]){
-						//Write out superpixel orientations
-						if (dT.size() == 1) fout << "superpixel polarizer orientations = " << std::fixed << dT[0] << endl;
-						else{
-							size_t commasperline = 5;
-							fout << "superpixel polarizer orientations = " << "{ ";
-							if (dT.size() > commasperline) fout << endl;
-							size_t ccnt = 0;
-							for (size_t k = 0; k < dT.size(); k++){
-								if (k == 0) fout << std::fixed << dT[k] << ",";
-								else if (k == dT.size() - 1) fout << "\t" << std::fixed << dT[k] << "}" << endl;
-								else fout << "\t" << std::fixed << dT[k] << ",";
-								ccnt++;
-								if (ccnt == commasperline && k < dT.size() - 1){ fout << endl; ccnt = 0; }
-							}
-						}
-					}
-				}
-			}
+            //Exposure time in microseconds
+            if(getExposureTime()>0){
+                fout << "exposure time = " << getExposureTime() << endl;
+            }
+
+            //Camera gain
+            if(getCameraGain()>0){
+                fout << "gain = " << getCameraGain() << endl;
+            }
+
+            //Camera gamma value
+            if(getCameraGamma()>0){
+                fout << "gamma = " << getCameraGamma() << endl;
+            }
+
+            //Number of image frames averaged during acquisition
+            if(getNumberFramesAveraged()>0){
+                fout << "number frames averaged = " << getNumberFramesAveraged() << endl;
+            }
+
+            //Lens focal length
+            if(getLensFocalLength()>0){
+                fout << "lens focal length = " << getLensFocalLength() << endl;
+            }
+
+            //Lens aperture setting
+            if(getLensFNumber()>0){
+                fout << "lens fnumber = " << getLensFNumber() << endl;
+            }
+
+            //Camera pixel pitch
+            if(getPixelPitch()>0){
+                fout << "pixel pitch = " << getPixelPitch() << endl;
+            }
+
+            //Camera azimuth
+            if(getCameraAzimuth()>-360 && getCameraAzimuth()<360){
+                fout << "camera azimuth = " << getCameraAzimuth() << endl;
+            }
+
+            //Camera elevation
+            if(getCameraElevation()>=-90 && getCameraElevation()<=90){
+                fout << "camera elevation = " << getCameraElevation() << endl;
+            }
+
+            //Turntable azimuth
+            if(getTurntableAzimuth()>-360 && getTurntableAzimuth()<360){
+                fout << "turntable azimuth = " << getTurntableAzimuth() << endl;
+            }
+
+            //Solar azimuth
+            if(getSolarAzimuth()>-360 && getSolarAzimuth()<360){
+                fout << "solar azimuth = " << getSolarAzimuth() << endl;
+            }
+
+            //Solar elevation
+            if(getSolarElevation()>=-90 && getSolarElevation()<=90){
+                fout << "solar elevation = " << getSolarElevation() << endl;
+            }
+
+            //Write out super pixel size and orientations
+            if (m_ugrid_superpixel_size.size() == 2)
+                fout << "microgrid superpixel size = " << "{" << m_ugrid_superpixel_size[0] << ", " << m_ugrid_superpixel_size[1] << "}" << endl;
+
+            //Write out polarizer orientations
+            std::vector<double> dT;
+            dT.clear(); getPolarizerOrientations(dT);
+            if (dT.size() > 0){
+                //Write out polarizer orientations
+                if (dT.size() == 1) fout << "polarizer orientations = " << std::fixed << dT[0] << endl;
+                else{
+                    size_t commasperline = 5;
+                    fout << "polarizer orientations = " << "{ ";
+                    if (dT.size() > commasperline) fout << endl;
+                    size_t ccnt = 0;
+                    for (size_t k = 0; k < dT.size(); k++){
+                        if (k == 0) fout << std::fixed << dT[k] << ",";
+                        else if (k == dT.size() - 1) fout << "\t" << std::fixed << dT[k] << "}" << endl;
+                        else fout << "\t" << std::fixed << dT[k] << ",";
+                        ccnt++;
+                        if (ccnt == commasperline && k < dT.size() - 1){ fout << endl; ccnt = 0; }
+                    }
+                }
+            }
+
+            //Write out polarizer spectral orientations
+            if(getPolarizerSpectralOrientations() != "")
+                fout << "polarizer spectral orientations = " << getPolarizerSpectralOrientations() << endl;
 
 			//Write out only if file is a flat field calibration file
 			if ((getProductType() == FLATFIELD) || (getProductType() == FLATFIELD_AVERAGE)){
@@ -500,53 +631,49 @@ void CPIFile::setDataType(ENVI_DATA_TYPE type){
 
 
 //Sets the M x N size of a microgrid super-pixel
-void CPIFile::setSuperpixelSize(size_t numcols, size_t numrows){
-	m_superpixel_size.clear();
-	m_superpixel_size.push_back(numcols);
-	m_superpixel_size.push_back(numrows);
+void CPIFile::setMicrogridSuperpixelSize(size_t numcols, size_t numrows){
+    m_ugrid_superpixel_size.clear();
+    m_ugrid_superpixel_size.push_back(numcols);
+    m_ugrid_superpixel_size.push_back(numrows);
 }
 
 //Sets the M x N size of a microgrid super-pixel from a string array read in from a PI header file (expected 2-integer elements)
 //If resulting parsed vector does not have a length of 2, superpixel size vector is cleared.
-bool CPIFile::setSuperpixelSize(std::string superpixelsize){
-	if (superpixelsize == "") { m_superpixel_size.clear(); return true; }
-	if (parseUnknownParameterValueFieldToSizeT(superpixelsize, m_superpixel_size)){
-		if (m_superpixel_size.size() == 2){
+bool CPIFile::setMicrogridSuperpixelSize(std::string superpixelsize){
+    if (superpixelsize == "") { m_ugrid_superpixel_size.clear(); return true; }
+    if (parseUnknownParameterValueFieldToSizeT(superpixelsize, m_ugrid_superpixel_size)){
+        if (m_ugrid_superpixel_size.size() == 2){
 			return true;
 		}
 		else{
-			m_superpixel_size.clear();
+            m_ugrid_superpixel_size.clear();
 			return false;
 		}
 	}
 	else return false;
 }
 
-//Sets an array of microgrid polarizer orientations. This requires that m_superpixel_size be properly set, and further
-//requires that the polarizer orientation vector contain the same number of elements as defined by the size of the superpixel, 
-//i.e., if the super pixel is M x N, then the length of the polarizer vector be MN.
-bool CPIFile::setMicrogridPolarizerOrientations(std::vector<double> &porientations){
+//Sets the polarizer orientations. No error checking is performed based upon sensor type since this is used
+//by both DoT and DoFP sensors for different products in different ways. Thus, we trust that the user will
+//know what they are doing when setting this.
+bool CPIFile::setPolarizerOrientations(std::vector<double> &porientations){
 
-	m_ugrid_polarizer_orientations.clear();
-	if (m_superpixel_size.size() == 2){
-		if (porientations.size() == m_superpixel_size[0] * m_superpixel_size[1]){
-			m_ugrid_polarizer_orientations = porientations;
-			return true;
-		}
-		else return false;
-	}
-	else return false;
+    m_polarizer_orientations.clear();
+
+    m_polarizer_orientations = porientations;
+    m_polarimetric_channels = m_polarizer_orientations.size();
+    return true;
 }
 
 //Sets an array of microgrid polarizer orientations from a string array read in from a PI header file.
 //Returns true after passing "" to clear the orientations list, or if there is more than one element
 //in the vector after parsing a non-zero length string.
-bool CPIFile::setMicrogridPolarizerOrientations(std::string orientations){
-	if (orientations == "") { m_ugrid_polarizer_orientations.clear(); return true; }
-	if (parseUnknownParameterValueFieldToDouble(orientations, m_ugrid_polarizer_orientations)){
-		if (m_ugrid_polarizer_orientations.size()>0) return true;
+bool CPIFile::setPolarizerOrientations(std::string orientations){
+    if (orientations == "") { m_polarizer_orientations.clear(); return true; }
+    if (parseUnknownParameterValueFieldToDouble(orientations, m_polarizer_orientations)){
+        if (m_polarizer_orientations.size()>0) return true;
 		else{
-			m_ugrid_polarizer_orientations.clear();
+            m_polarizer_orientations.clear();
 			return false;
 		}
 	}
@@ -598,7 +725,15 @@ bool CPIFile::addPIParameter(std::string key, std::string value){
 	bool success = false;
 	//If Parameter is in the known list
 	if (isKnownParameter(key)){
-		if (key == "width"){
+        if (key == "description"){
+            setDescription(value.substr(1,value.length()-2));
+            success = true;
+        }
+        else if (key == "timestamp"){
+            setTimeStamp(value);
+            success = true;
+        }
+        else if (key == "width"){
 			int num = atoi(value.c_str());
 			if (num > 0) { setWidth(size_t(num)); success = true; m_width_valid = true; }
 			else setWidth(0);
@@ -613,12 +748,6 @@ bool CPIFile::addPIParameter(std::string key, std::string value){
 			if (num > 0) { setNumberOfFrames(size_t(num)); success = true; m_frames_valid = true; }
 			else setNumberOfFrames(0);
 		}
-		else if (key == "byte order"){
-			size_t num = atoi(value.c_str());
-			if (num == 0) { setByteOrder(false); success = true; m_byte_order_valid = true; }
-			else if (num == 1) { setByteOrder(true); success = true; m_byte_order_valid = true; }
-			else setByteOrder(false);
-		}
 		else if (key == "data type"){
 			int num = atoi(value.c_str());
 			if (num == 1)     { setDataType(ENVI_CHAR);	success = true; m_data_type_valid = true; }
@@ -632,50 +761,140 @@ bool CPIFile::addPIParameter(std::string key, std::string value){
 			else if (num == 15){ setDataType(ENVI_UNSIGNED_I64); success = true; m_data_type_valid = true; }
 			else setDataType(UNKNOWN_DATA_TYPE);
 		}
+        else if (key == "byte order"){
+            size_t num = atoi(value.c_str());
+            if (num == 0) { setByteOrder(false); success = true; m_byte_order_valid = true; }
+            else if (num == 1) { setByteOrder(true); success = true; m_byte_order_valid = true; }
+            else setByteOrder(false);
+        }
 		else if (key == "product type"){
 			if (value == "unknown product type")     { setProductType(UNKNOWN_PRODUCT_TYPE);	success = true; m_product_type_valid = true; }
-			else if (value == "raw"){ setProductType(RAW); success = true; m_product_type_valid = true; }
+            else if (value == "intensity"){ setProductType(INTENSITY); success = true; m_product_type_valid = true; }
+            else if (value == "spatially modulated intensity"){ setProductType(SPATIALLY_MODULATED_INTENSITY); success = true; m_product_type_valid = true; }
 			else if (value == "s0"){ setProductType(S0); success = true; m_product_type_valid = true; }
 			else if (value == "s1"){ setProductType(S1); success = true; m_product_type_valid = true; }
 			else if (value == "s2"){ setProductType(S2); success = true; m_product_type_valid = true; }
+            else if (value == "linear stokes"){ setProductType(LINEAR_STOKES); success = true; m_product_type_valid = true; }
+            else if (value == "linear stokes dolp aop"){ setProductType(LINEAR_STOKES_DOLP_AOP); success = true; m_product_type_valid = true; }
 			else if (value == "dolp"){ setProductType(DOLP); success = true; m_product_type_valid = true; }
 			else if (value == "aop"){ setProductType(AOP); success = true; m_product_type_valid = true; }
+            else if (value == "pcm"){ setProductType(PCM); success = true; m_product_type_valid = true; }
 			else if (value == "tyocolor"){ setProductType(TYOCOLOR); success = true; m_product_type_valid = true; }
 			else if (value == "flatfield"){ setProductType(FLATFIELD); success = true; m_product_type_valid = true; }
 			else if (value == "flatfield average"){ setProductType(FLATFIELD_AVERAGE); success = true; m_product_type_valid = true; }
 			else if (value == "bad pixel map"){ setProductType(BAD_PIXEL_MAP); success = true; m_product_type_valid = true; }
-			else if (value == "intensity" || value == "3"){ setProductType(INTENSITY); success = true; m_product_type_valid = true; }
-			else if (value == "stokes" || value == "4"){ setProductType(STOKES); success = true; m_product_type_valid = true; }
 			else setProductType(UNKNOWN_PRODUCT_TYPE);
-		}
-		else if (key == "description"){
-			setDescription(value.substr(1,value.length()-2));
-			success = true;
 		}
 		else if (key == "sensor type"){
 			int num = atoi(value.c_str());
 			if (num == -1)    { setSensorType(UNKNOWN_SENSOR_TYPE);	success = true; }
 			else if (num == 0){ setSensorType(DIVISION_OF_FOCAL_PLANE); success = true; }
-			else if (num == 1){ setSensorType(DIVISION_OF_APERTURE); success = true; }
+            else if (num == 1){ setSensorType(DIVISION_OF_TIME); success = true; }
+            else if (num == 2){ setSensorType(DIVISION_OF_AMPLITUDE); success = true; }
+            else if (num == 3){ setSensorType(DIVISION_OF_APERTURE); success = true; }
+            else if (num == 10){ setSensorType(NON_POLARIMETRIC_SENSOR); success = true; }
 			else setSensorType(UNKNOWN_SENSOR_TYPE);
-		}
+		}        
 		else if (key == "sensor name"){
 			int num = atoi(value.c_str());
 			if (num == -1)     { setSensorName(UNKNOWN_SENSOR_NAME);	success = true; }
 			else if (num == 0){ setSensorName(PIRATE_I); success = true; }
 			else if (num == 1){ setSensorName(PIRATE_II); success = true; }
 			else if (num == 10){ setSensorName(TYO_LWIRuG); success = true; }
-			else if (num == 20){ setSensorName(PYXIS); success = true; }
+            else if (num == 20){ setSensorName(PYXIS_LWIR_MONO_UGRID); success = true; }
+            else if (num == 21){ setSensorName(CORVIS_LWIR_MONO_DOT); success = true; }
+            else if (num == 31){ setSensorName(BLACKFLY_VISIBLE_MONO_UGRID); success = true; }
+            else if (num == 32){ setSensorName(BLACKFLY_VISIBLE_MONO_DOT); success = true; }
+            else if (num == 33){ setSensorName(BLACKFLY_VISIBLE_RGB_UGRID); success = true; }
 			else setSensorName(UNKNOWN_SENSOR_NAME);
-		}
-		else if (key == "superpixel size"){
-			setSuperpixelSize(value.c_str());
-			success = true;
-		}
-		else if (key == "superpixel polarizer orientations"){
-			setMicrogridPolarizerOrientations(value.c_str());
-			success = true;
-		}
+        }
+        else if(key == "spectral channels"){
+            int num = atoi(value.c_str());
+            if (num > 0) { setNumberSpectralChannels(size_t(num)); success = true; }
+            else setNumberSpectralChannels(0);
+        }
+        else if(key == "polarimetric channels"){
+            int num = atoi(value.c_str());
+            if (num > 0) { setNumberPolarimetricChannels(size_t(num)); success = true; }
+            else setNumberPolarimetricChannels(0);
+        }
+        else if(key == "adc bit depth"){
+            int num = atoi(value.c_str());
+            if (num > 0) { setADCBitDepth(size_t(num)); success = true; }
+            else setADCBitDepth(0);
+        }
+        else if(key == "exposure time"){
+            long num = atoi(value.c_str());
+            if (num > 0) { setExposureTime(long(num)); success = true; }
+            else setExposureTime(0);
+        }
+        else if(key == "gain"){
+            double num = atof(value.c_str());
+            if (num > 0) { setCameraGain(double(num)); success = true; }
+            else setCameraGain(0);
+        }
+        else if(key == "gamma"){
+            double num = atof(value.c_str());
+            if (num > 0) { setCameraGamma(double(num)); success = true; }
+            else setCameraGamma(0);
+        }
+        else if(key == "number frames averaged"){
+            size_t num = atoi(value.c_str());
+            if (num > 0) { setNumberFramesAveraged(size_t(num)); success = true; }
+            else setNumberFramesAveraged(0);
+        }
+        else if(key == "lens focal length"){
+            double num = atof(value.c_str());
+            if (num > 0) { setLensFocalLength(double(num)); success = true; }
+            else setLensFocalLength(0);
+        }
+        else if(key == "lens fnumber"){
+            double num = atof(value.c_str());
+            if (num > 0) { setLensFNumber(double(num)); success = true; }
+            else setLensFNumber(0);
+        }
+        else if(key == "pixel pitch"){
+            double num = atof(value.c_str());
+            if (num > 0) { setPixelPitch(double(num)); success = true; }
+            else setPixelPitch(0);
+        }
+        else if (key == "camera azimuth"){
+            double num = atof(value.c_str());
+            setCameraAzimuth(num);
+            success = true;
+        }
+        else if (key == "camera elevation"){
+            double num = atof(value.c_str());
+            setCameraElevation(num);
+            success = true;
+        }
+        else if (key == "turntable azimuth"){
+            double num = atof(value.c_str());
+            setTurntableAzimuth(num);
+            success = true;
+        }
+        else if (key == "solar azimuth"){
+            double num = atof(value.c_str());
+            setSolarAzimuth(num);
+            success = true;
+        }
+        else if (key == "solar elevation"){
+            double num = atof(value.c_str());
+            setSolarElevation(num);
+            success = true;
+        }
+        else if (key == "superpixel size"){
+            setMicrogridSuperpixelSize(value.c_str());
+            success = true;
+        }
+        else if (key == "polarizer orientations"){
+            setPolarizerOrientations(value.c_str());
+            success = true;
+        }
+        else if (key == "polarizer spectral orientations"){
+            setPolarizerSpectralOrientations(value.c_str());
+            success = true;
+        }
 		else if (key == "flatfield values"){
 			setFlatFieldValues(value.c_str());
 			success = true;
@@ -757,7 +976,7 @@ void CPIFile::getFileDimensions(size_t& width, size_t& height, size_t& numframes
 int CPIFile::findUnknownParameterIndex(std::string key){
 	int index = -1;
 	for (size_t i = 0; i<m_unknown_parameters.size(); i++){
-		if (strcasecmp(key.c_str(), m_unknown_parameters[i].key.c_str()) == 0){
+		if (strcmp(key.c_str(), m_unknown_parameters[i].key.c_str()) == 0){
 			index = (int)i;
 		}
 	}
@@ -1018,17 +1237,6 @@ CPReader::~CPReader(){
 	if (m_fileopen)	m_fin.close();
 }
 
-int CPReader::closeFile()
-{
-	if (m_fileopen)	
-	{
-		m_fin.close();
-		m_fileopen = false;
-		return 0;
-	}
-	return -1;
-}
-
 
 //Get Methods
 
@@ -1071,7 +1279,7 @@ bool CPReader::openFile(string& filename, PI_FILE_FORMAT filetype){
 
 	bool pifile = false;
 	if (filetype == PIFILE) pifile = true;
-	
+
 	//Open Input File
 	m_filename = filename;	
 	m_fin.open(filename, std::ios::binary);
@@ -1089,16 +1297,12 @@ bool CPReader::openFile(string& filename, PI_FILE_FORMAT filetype){
 			m_currentframe = 0;
 			setFileTypeDimensions();
 			//calculateNumFrames();
-			if (areDimensionsSet() == true) 
-			{
-				return true;
-			}
+			if (areDimensionsSet() == true) return true;
 			else return false;
 		}
 	}
 	//Otherwise non-PI file opened successfully
 	else{ 
-		
 		m_fileopen = true;
 		m_fileformat = filetype;
 		m_currentframe = 0;
@@ -1341,11 +1545,11 @@ int CPIWriter::openFile(string& filename, size_t width, size_t height, ENVI_DATA
 		//If data file opens successfully..
 		else{
 
-			//if (debug_mode) cout << "Output file opened successfully.\n";
+			if (debug_mode) cout << "Output file opened successfully.\n";
 
 			//Set all required parameters and zero out frames
 			m_pi_parameters.setOutputFilenames(filename);
-			//if (debug_mode) cout << "PI File parameters were set successfully.\n";
+			if (debug_mode) cout << "PI File parameters were set successfully.\n";
 			m_pi_parameters.setWidth(width);
 			m_pi_parameters.setHeight(height);
 			m_pi_parameters.setDataType(data_type);

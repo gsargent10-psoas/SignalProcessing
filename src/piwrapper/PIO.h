@@ -42,18 +42,37 @@ public:
 	void setProductType(PI_PRODUCT_TYPE product_type){ m_product_type = product_type; m_product_type_valid = true; }
 	//Optional Header Parameters
 	void setDescription(std::string desc){ m_description = desc; }
-	void setSensorType(PI_SENSOR_TYPE sensor_type){ m_sensor_type = sensor_type; }
-	void setSensorName(PI_SENSOR_NAME sensor_name){ m_sensor_name = sensor_name; }
-	void setSuperpixelSize(size_t numcols, size_t numrows);
-	bool setSuperpixelSize(std::string superpixelsize);
-	bool setMicrogridPolarizerOrientations(std::vector<double> &porientations);
-	bool setMicrogridPolarizerOrientations(std::string orientations);
-	void setFlatFieldValues(std::vector<double> vals){ m_flatfield_values = vals; }
+    //-->Camera Parameters
+    void setLensFocalLength(double fl){ m_lens_focal_length = fl; }
+    void setLensFNumber(double fn){ m_lens_fnumber = fn; }
+    void setPixelPitch(double pp) { m_pixel_pitch = pp; }
+    void setNumberSpectralChannels(size_t nc){ m_spectral_channels = nc; }
+    void setNumberPolarimetricChannels(size_t nc){ m_polarimetric_channels = nc; }
+    void setADCBitDepth(size_t bd){ m_adc_bit_depth = bd; }
+    void setExposureTime(long et){ m_exposure_time = et; }
+    void setCameraGain(double g){ m_gain = g; }
+    void setCameraGamma(double g){ m_gamma = g; }
+    void setNumberFramesAveraged(size_t nf){ m_nframes_averaged = nf; }
+    void setTimeStamp(string ts) { m_timestamp = ts; }
+    void setSensorType(PI_SENSOR_TYPE sensor_type){ m_sensor_type = sensor_type; }
+    void setSensorName(PI_SENSOR_NAME sensor_name){ m_sensor_name = sensor_name; }
+    void setMicrogridSuperpixelSize(size_t numcols, size_t numrows);
+    bool setMicrogridSuperpixelSize(std::string superpixelsize);
+    bool setPolarizerOrientations(std::vector<double> &porientations);
+    bool setPolarizerOrientations(std::string orientations);
+    void setPolarizerSpectralOrientations(std::string sorientations) { m_polarizer_spectral_orientations = sorientations;}
+    //-->Calibration Parameters
+    void setFlatFieldValues(std::vector<double> vals){ m_flatfield_values = vals; }
 	bool setFlatFieldValues(std::string values);
 	void setFlatFieldUnit(RADIOMETRIC_UNIT unit){ m_flatfield_unit = unit; }
 	void setFlatFieldSourceType(bool isEmissive){ m_flatfield_source_type = isEmissive; }
 	void setFlatFieldCenterWavelength(double val, WAVELENGTH_UNIT unit){ m_flatfield_center_wavelength = val; m_flatfield_wavelength_unit = unit; }
 	void setBlackbodyEmissivity(double val) { if (val < 0) m_blackbody_emissivity = 0.0; else if (val>1.0) m_blackbody_emissivity = 1.0; else m_blackbody_emissivity = val; }
+    void setCameraAzimuth(double val) { m_camera_azimuth = val;}
+    void setCameraElevation(double val) { m_camera_elevation = val;}
+    void setTurntableAzimuth(double val) { m_turntable_azimuth = val;}
+    void setSolarAzimuth(double val) { m_solar_azimuth = val;}
+    void setSolarElevation(double val) { m_solar_elevation = val;}
 	
 	//Unknown Parameter List
 	bool addPIParameter(std::string key, std::string value);
@@ -63,7 +82,6 @@ public:
 	void setSwapData(bool swap_data){ m_swap_data = swap_data; }
 	void setOutputFilenames(std::string data_file);
 	void setInputHeaderValid(bool valid) { m_valid_header = valid; }
-
 
 	////////////////////////
 	//Get Methods
@@ -78,18 +96,35 @@ public:
 	ENVI_DATA_TYPE getDataType() const{ return m_data_type; }
 	bool getByteOrder() const{ return m_byte_order; }
 	bool GetSwapData() const{ return m_swap_data; }
-	PI_PRODUCT_TYPE getProductType() { return m_product_type; }
+    PI_PRODUCT_TYPE getProductType() const { return m_product_type; }
 	std::string getDescription() const { return m_description; }
+    double getLensFocalLength() const { return m_lens_focal_length; }
+    double getLensFNumber() const { return m_lens_fnumber; }
+    double getPixelPitch() const { return m_pixel_pitch; }
+    size_t getNumberSpectralChannels() const { return m_spectral_channels; }
+    size_t getNumberPolarimetricChannels() const { return m_polarimetric_channels; }
+    size_t getADCBitDepth() const { return m_adc_bit_depth; }
+    long getExposureTime() const { return m_exposure_time; }
+    double getCameraGain() const { return m_gain; }
+    double getCameraGamma() const { return m_gamma; }
+    size_t getNumberFramesAveraged() { return m_nframes_averaged; }
+    string getTimeStamp() {return m_timestamp; }
 	PI_SENSOR_TYPE getSensorType() const{ return m_sensor_type; }
 	PI_SENSOR_NAME getSensorName() const{ return m_sensor_name; }
-	void getSuperPixelSize(std::vector<size_t> &sps) { sps = m_superpixel_size; }
-	void getMicrogridPolarizerOrientations(std::vector<double> &sps) { sps = m_ugrid_polarizer_orientations; }
+    void getMicrogridSuperpixelSize(std::vector<size_t> &sps) { sps = m_ugrid_superpixel_size; }
+    void getPolarizerOrientations(std::vector<double> &sps) { sps = m_polarizer_orientations; }
+    std::string getPolarizerSpectralOrientations() { return m_polarizer_spectral_orientations; }
 	void getFlatFieldValues(std::vector<double> &vals) const{ vals = m_flatfield_values; }
 	RADIOMETRIC_UNIT getFlatFieldUnit() const{ return m_flatfield_unit; }
 	bool getFlatFieldSourceType() { return m_flatfield_source_type; }
 	void getFlatFieldCenterWavelength(double &val, WAVELENGTH_UNIT &unit){ val = m_flatfield_center_wavelength; unit = m_flatfield_wavelength_unit; }
 	double getBlackbodyEmissivity() { return m_blackbody_emissivity; }
-	
+    double getCameraAzimuth() { return m_camera_azimuth;}
+    double getCameraElevation() { return m_camera_elevation;}
+    double getTurntableAzimuth() { return m_turntable_azimuth;}
+    double getSolarAzimuth() { return m_solar_azimuth;}
+    double getSolarElevation() { return m_solar_elevation;}
+
 	void getUnknownParameters(std::vector<keyValuePair> &unknownParams) const { unknownParams = m_unknown_parameters; }
 	std::string findUnknownParameterValue(std::string &key){ int idx = findUnknownParameterIndex(key); if (idx >= 0) return m_unknown_parameters[idx].value; else return ""; }
 	std::string getDataFilename() const{ return m_filename; }
@@ -125,19 +160,46 @@ private:
 	//PI Required Header Parameters
 	size_t m_frames;									//Number of frames
 	size_t m_width;         							//Image width
-	size_t m_height;									//Image height
+	size_t m_height;									//Image height    
 	size_t m_bytes_per_pixel;							//Bytes per pixel
 	bool m_byte_order;									//Byte Order (0=intel, 1=other)
 	ENVI_DATA_TYPE m_data_type; 						//File Type (e.g., 12=short)
 	PI_PRODUCT_TYPE m_product_type;						//PI data product type
 
-	//PI Non-required, but known parameters
+	//PI Non-required, but known parameters    
 	std::string m_description;       					//Description field
+    //-->camera parameters<--
+    double m_lens_focal_length;                         //Camera lens focal length
+    double m_lens_fnumber;                              //Camera lens f/number
+    double m_pixel_pitch;                               //Camera pixel pitch
+    size_t m_spectral_channels;                         //Number of Image Spectral Channels
+    size_t m_polarimetric_channels;                     //Number of Image Polarimetric Channels
+    size_t m_adc_bit_depth;                             //ADC bit depth
+    long m_exposure_time;                               //Exposure time in microseconds
+    double m_gain;                                      //Camera gain value
+    double m_gamma;                                     //Camera gamma value
+    size_t m_nframes_averaged;                          //Number of frames averaged
+    string m_timestamp;                                 //Time stamp of when data was collected
 	PI_SENSOR_TYPE m_sensor_type;						//PI sensor type
 	PI_SENSOR_NAME m_sensor_name;						//PI sensor name
-	std::vector<size_t> m_superpixel_size;				//This is a 2 element size_t vector specifying the size of a superpixel within a microgrid sensor.
-	std::vector<double> m_ugrid_polarizer_orientations;	//This is an N element vector array of doubles that specify the polarizer orientations at each 
-														//location within the microgrid superpixel (L->R, T->B)
+    std::vector<size_t> m_ugrid_superpixel_size;		//This is a 2 element size_t vector specifying the size of a superpixel within a microgrid sensor.
+    std::vector<double> m_polarizer_orientations;       //This is an N element vector array of doubles that specify the polarizer orientations of each polarized intensity channel
+                                                            //This is used for all polarization sensors. For ugrid sensors, the values are specified row-wise
+    std::string m_polarizer_spectral_orientations;      //This is an N-length string that specifies the color of each microgrid pixel (M=mono,R=red,G=green,B=blue)
+                                                        //location within the microgrid superpixel (specified row-wise)
+
+    //Camera Geometry Parameters
+    double m_camera_azimuth;                            //This specifies the azimuthal angle of the sensor (0 is north)
+    double m_camera_elevation;                          //This specifies the elevation angle of the sensor (90 is zenith, look downward)
+
+    //Scene Geometry Parameters
+    double m_turntable_azimuth;                         //This specifies the azimuthal angle of the laboratory object positioning turntable
+
+    //Solar Geometry Parameters
+    double m_solar_azimuth;                             //This specifies the azimuthal angle of the sun (0 is north) or lab solar source
+    double m_solar_elevation;                           //This specifies the elevation angle of the sun (90 is zenith) or lab solar source
+
+    //-->Calibration parameters<--
 	RADIOMETRIC_UNIT m_flatfield_unit;					//If the product type is a flatfield file, this is a string describing the units
 	std::vector<double> m_flatfield_values;				//If the product type is a flatfield file, this is a value specifying the flat field values
 														// If this is a single flat-field images this vector will have a single value. If it is a flat-field file
@@ -146,6 +208,7 @@ private:
 	double m_flatfield_center_wavelength;				//Center wavelength of the flat field souce (for radiometry calculations)
 	WAVELENGTH_UNIT m_flatfield_wavelength_unit;		//Unit of wavelength
 	double m_blackbody_emissivity;						//Emissivity value for an emissive blackbody
+
 
 
 	//Other PI File Parameters
@@ -202,8 +265,6 @@ public:
 	//Instantiate class and open passed filename for reading (file type is specified regardless of file extension)
 	CPReader(string& filename, PI_FILE_FORMAT fileformat);
 	~CPReader();
-	
-	int closeFile();
 
 	//********************************
 	//Public methods for reading data
@@ -230,18 +291,35 @@ public:
 	void   getFilename(string& filename) const { filename = m_filename; }
 
 	//Additional PI File get methods. Only will return defined values when the file format is a PI File.
-	PI_PRODUCT_TYPE getPIFileProductType() { if (m_fileformat == PIFILE) return m_pifile.getProductType(); else return UNKNOWN_PRODUCT_TYPE; }
 	std::string getPIFileDescription() const { if (m_fileformat == PIFILE) return m_pifile.getDescription(); else return ""; }
-	PI_SENSOR_TYPE getPIFileSensorType() const{ if (m_fileformat == PIFILE) return m_pifile.getSensorType(); else return UNKNOWN_SENSOR_TYPE; }
-	PI_SENSOR_NAME getPIFileSensorName() const{ if (m_fileformat == PIFILE) return m_pifile.getSensorName(); else return UNKNOWN_SENSOR_NAME; }
-	void getPIFileSuperPixelSize(std::vector<size_t> &sps) { if (m_fileformat == PIFILE) m_pifile.getSuperPixelSize(sps); else sps.clear(); }
-	void getPIFileMicrogridPolarizerOrientations(std::vector<double> &mpo) { if (m_fileformat == PIFILE) m_pifile.getMicrogridPolarizerOrientations(mpo); else mpo.clear(); }
+    PI_PRODUCT_TYPE getPIFileProductType() { if (m_fileformat == PIFILE) return m_pifile.getProductType(); else return UNKNOWN_PRODUCT_TYPE; }
+    PI_SENSOR_TYPE getPIFileSensorType() const{ if (m_fileformat == PIFILE) return m_pifile.getSensorType(); else return UNKNOWN_SENSOR_TYPE; }
+    PI_SENSOR_NAME getPIFileSensorName() const{ if (m_fileformat == PIFILE) return m_pifile.getSensorName(); else return UNKNOWN_SENSOR_NAME; }
+    double getPIFileLensFocalLength() { return m_pifile.getLensFocalLength(); }
+    double getPIFileLensFNumber() { return m_pifile.getLensFNumber(); }
+    double getPIFilePixelPitch() { return m_pifile.getPixelPitch(); }
+    size_t getPIFileNumberSpectralChannels() { return m_pifile.getNumberSpectralChannels(); }
+    size_t getPIFileNumberPolarimetricChannels() { return m_pifile.getNumberPolarimetricChannels(); }
+    size_t getPIFileADCBitDepth() { return m_pifile.getADCBitDepth(); }
+    long getPIFileExposureTime() { return m_pifile.getExposureTime(); }
+    double getPIFileCameraGain() { return m_pifile.getCameraGain(); }
+    double getPIFileCameraGamma() { return m_pifile.getCameraGamma(); }
+    size_t getPIFileNumberFramesAveraged() { return m_pifile.getNumberFramesAveraged(); }
+    string getTimeStamp() { return m_pifile.getTimeStamp(); }
+    void getPIFileMicrogridSuperpixelSize(std::vector<size_t> &sps) { if (m_fileformat == PIFILE) m_pifile.getMicrogridSuperpixelSize(sps); else sps.clear(); }
+    void getPIFilePolarizerOrientations(std::vector<double> &mpo) { if (m_fileformat == PIFILE) m_pifile.getPolarizerOrientations(mpo); else mpo.clear(); }
+    std::string getPIFilePolarizerSpectralOrientations() { return m_pifile.getPolarizerSpectralOrientations(); }
+    double getCameraAzimuth() { return m_pifile.getCameraAzimuth();}
+    double getCameraElevation() { return m_pifile.getCameraElevation();}
+    double getTurntableAzimuth() { return m_pifile.getTurntableAzimuth();}
+    double getSolarAzimuth() { return m_pifile.getSolarAzimuth();}
+    double getSolarElevation() { return m_pifile.getSolarElevation();}
+
 	void getPIFileFlatFieldValues(std::vector<double> &vals) { if (m_fileformat == PIFILE) m_pifile.getFlatFieldValues(vals); else vals.clear(); }
 	RADIOMETRIC_UNIT getPIFileFlatFieldUnit() { if (m_fileformat == PIFILE) return m_pifile.getFlatFieldUnit(); else return UNKNOWN_RADIOMETRIC_UNIT; }
 	bool getFlatFieldSourceType(){ return m_pifile.getFlatFieldSourceType(); }	
 	void getFlatFieldCenterWavelength(double &val, WAVELENGTH_UNIT &unit){ m_pifile.getFlatFieldCenterWavelength(val, unit); }	
-	double getBlackbodyEmissivity() { m_pifile.getBlackbodyEmissivity(); }
-
+    double getBlackbodyEmissivity() { return m_pifile.getBlackbodyEmissivity(); }
 
 	void getPIFileUnknownParameters(std::vector<keyValuePair> &unknownParams) const { if (m_fileformat == PIFILE) m_pifile.getUnknownParameters(unknownParams); else unknownParams.clear(); }
 	std::string findPIFileUnknownParameterValue(std::string &key) { if (m_fileformat == PIFILE) return m_pifile.findUnknownParameterValue(key); else return ""; }
@@ -406,7 +484,11 @@ Optional reader-recognized parameters:
 	description:		Detailed description of the data file. (string)
 	data units:			Units of the data. (string)
 
-Custom header parameters can be added using the function addKeyValue(...). */
+Custom header parameters can be added using the function addKeyValue(...).
+
+Example usage instructions:
+
+*/
 class CPIWriter{
 public:
 
@@ -439,6 +521,8 @@ public:
 	//Returns -4 if there was a problem writing file to disk.
 	//NOTE: No check is performed to determine if the passed vector type matches the specified ENVI_DATA_TYPE--thus the user must take care
 	template <typename T> int writeFrames(vector<T> &frames, size_t numframes);
+    //This version will write a subset of frames passed from starting_frames to ending_frames
+    template <typename T> int writeFramesRange(vector<T> &frames, size_t starting_frame, size_t ending_frame);
 	//This overloaded version will allow for a pointer to be passed instead of a vector. This is to
 	//support writing the stream directly from the camera.
 	//Note that in this case the size of the images pointed to by *T cannot be verified for size.
@@ -471,13 +555,31 @@ public:
 	std::string getDescription() const { return m_pi_parameters.getDescription(); }
 	PI_SENSOR_TYPE getSensorType() const{ return m_pi_parameters.getSensorType(); }
 	PI_SENSOR_NAME getSensorName() const{ return m_pi_parameters.getSensorName(); }
-	void getSuperPixelSize(std::vector<size_t> &sps) { m_pi_parameters.getSuperPixelSize(sps); }
-	void getMicrogridPolarizerOrientations(std::vector<double> &mpo) { m_pi_parameters.getMicrogridPolarizerOrientations(mpo); }
+    double getPIFileLensFocalLength() { return m_pi_parameters.getLensFocalLength(); }
+    double getPIFileLensFNumber() { return m_pi_parameters.getLensFNumber(); }
+    double getPIFilePixelPitch() { return m_pi_parameters.getPixelPitch(); }
+    size_t getPIFileNumberSpectralChannels() { return m_pi_parameters.getNumberSpectralChannels(); }
+    size_t getPIFileNumberPolarimetricChannels() { return m_pi_parameters.getNumberPolarimetricChannels(); }
+    size_t getPIFileADCBitDepth() { return m_pi_parameters.getADCBitDepth(); }
+    long getPIFileExposureTime() { return m_pi_parameters.getExposureTime(); }
+    double getPIFileCameraGain() { return m_pi_parameters.getCameraGain(); }
+    double getPIFileCameraGamma() { return m_pi_parameters.getCameraGamma(); }
+    size_t getPIFileNumberFramesAveraged() { return m_pi_parameters.getNumberFramesAveraged(); }
+    string getTimeStamp() { return m_pi_parameters.getTimeStamp(); }
+    void getPIFileMicrogridSuperpixelSize(std::vector<size_t> &sps) { m_pi_parameters.getMicrogridSuperpixelSize(sps); }
+    void getPIFilePolarizerOrientations(std::vector<double> &mpo) { m_pi_parameters.getPolarizerOrientations(mpo); }
+    std::string getPIFilePolarizerSpectralOrientations() { return m_pi_parameters.getPolarizerSpectralOrientations(); }
+    double getPIFileCameraAzimuth() { return m_pi_parameters.getCameraAzimuth();}
+    double getPIFileCameraElevation() { return m_pi_parameters.getCameraElevation();}
+    double getPIFileTurntableAzimuth() { return m_pi_parameters.getTurntableAzimuth();}
+    double getPIFileSolarAzimuth() { return m_pi_parameters.getSolarAzimuth();}
+    double getPIFileSolarElevation() { return m_pi_parameters.getSolarElevation();}
+
 	void getPIFileFlatFieldValues(std::vector<double> &vals) { m_pi_parameters.getFlatFieldValues(vals); }
 	RADIOMETRIC_UNIT getPIFileFlatFieldUnit() { return m_pi_parameters.getFlatFieldUnit(); }
 	bool getFlatFieldSourceType(){ return m_pi_parameters.getFlatFieldSourceType(); }
 	void getFlatFieldCenterWavelength(double &val, WAVELENGTH_UNIT &unit){ m_pi_parameters.getFlatFieldCenterWavelength(val, unit); }
-	double getBlackbodyEmissivity() { m_pi_parameters.getBlackbodyEmissivity(); }
+    double getBlackbodyEmissivity() { return m_pi_parameters.getBlackbodyEmissivity(); }
 
 	void getUnknownParameters(std::vector<keyValuePair> &unknownParams) const { m_pi_parameters.getUnknownParameters(unknownParams); }
 	std::string findUnknownParameterValue(std::string &key) { return m_pi_parameters.findUnknownParameterValue(key); }
@@ -490,12 +592,30 @@ public:
 	//These are parameters: width, height, data type, byte order, product type, and output filename
 	//
 	//Optional Header Parameters
-	void setDescription(std::string desc){ m_pi_parameters.setDescription(desc); }
+	void setDescription(std::string desc){ m_pi_parameters.setDescription(desc); }    
 	void setSensorType(PI_SENSOR_TYPE sensor_type){ m_pi_parameters.setSensorType(sensor_type); }
 	void setSensorName(PI_SENSOR_NAME sensor_name){ m_pi_parameters.setSensorName(sensor_name); }
-	void setSuperpixelSize(size_t numcols, size_t numrows){ m_pi_parameters.setSuperpixelSize(numcols, numrows); }
-	void setMicrogridPolarizerOrientations(std::vector<double> &porientations){ m_pi_parameters.setMicrogridPolarizerOrientations(porientations); }
-	void setFlatFieldValues(std::vector<double> vals){ m_pi_parameters.setFlatFieldValues(vals); }
+    void setLensFocalLength(double fl) { m_pi_parameters.setLensFocalLength(fl); }
+    void setLensFNumber(double fn) { m_pi_parameters.setLensFNumber(fn); }
+    void setPixelPitch(double pp) { m_pi_parameters.setPixelPitch(pp); }
+    void setNumberSpectralChannels(size_t nc) { m_pi_parameters.setNumberSpectralChannels(nc); }
+    void setNumberPolarimetricChannels(size_t nc) { m_pi_parameters.setNumberPolarimetricChannels(nc); }
+    void setADCBitDepth(size_t bd) { m_pi_parameters.setADCBitDepth(bd); }
+    void setExposureTime(long et) { m_pi_parameters.setExposureTime(et); }
+    void setCameraGain(double g) { m_pi_parameters.setCameraGain(g); }
+    void setCameraGamma(double g) { m_pi_parameters.setCameraGamma(g); }
+    void setNumberFramesAveraged(size_t nf) { m_pi_parameters.setNumberFramesAveraged(nf); }
+    void setTimeStamp(string ts) { m_pi_parameters.setTimeStamp(ts); }
+    void setMicrogridSuperpixelSize(size_t numcols, size_t numrows) { m_pi_parameters.setMicrogridSuperpixelSize(numcols,numrows); }
+    void setPolarizerOrientations(std::vector<double> &mpo) { m_pi_parameters.setPolarizerOrientations(mpo); }
+    void setPolarizerSpectralOrientations(std::string so) { m_pi_parameters.setPolarizerSpectralOrientations(so); }
+    void setCameraAzimuth(double val){ m_pi_parameters.setCameraAzimuth(val);}
+    void setCameraElevation(double val){ m_pi_parameters.setCameraElevation(val);}
+    void setTurntableAzimuth(double val){ m_pi_parameters.setTurntableAzimuth(val);}
+    void setSolarAzimuth(double val){ m_pi_parameters.setSolarAzimuth(val);}
+    void setSolarElevation(double val){ m_pi_parameters.setSolarElevation(val);}
+
+    void setFlatFieldValues(std::vector<double> vals){ m_pi_parameters.setFlatFieldValues(vals); }
 	void setFlatFieldUnit(RADIOMETRIC_UNIT unit){ m_pi_parameters.setFlatFieldUnit(unit); }
 	void setFlatFieldSourceType(bool isEmissive){ m_pi_parameters.setFlatFieldSourceType(isEmissive); }
 	void setFlatFieldCenterWavelength(double val, WAVELENGTH_UNIT unit){ m_pi_parameters.setFlatFieldCenterWavelength(val, unit); }
@@ -530,7 +650,7 @@ template<typename T> void CPIWriter::binary_write(const T& value){
 //Will write the passed frame buffer to the data file (i.e., the number of specified frames is written to disk).
 //Returns 0 if data was successfully written to file.
 //Returns -1 if the data file is not open for writing
-//Returns -2 if the number of elements in frames does not match the getWidth()*getHeight()*getNumberofFrames() in m_pifile_parameters
+//Returns -2 if the number of elements in frames is not enough to support the specified frame range
 //Returns -3 if numframes < 1
 //NOTE: No check is performed to determine if the passed vector type matches the specified ENVI_DATA_TYPE. Thus, the user must take care
 //		to ensure that the correct data type is specified
@@ -556,7 +676,36 @@ template <typename T>	int CPIWriter::writeFrames(vector<T> &frames, size_t numfr
 	else return -3;
 }
 
+//Will write the range of frames specified within the passed frame buffer to the data file.
+//Returns 0 if data was successfully written to file.
+//Returns -1 if the data file is not open for writing
+//Returns -2 if the number of elements in frames does not match the getWidth()*getHeight()*getNumberofFrames() in m_pifile_parameters
+//Returns -3 if numframes < 1
+//NOTE: No check is performed to determine if the passed vector type matches the specified ENVI_DATA_TYPE. Thus, the user must take care
+//		to ensure that the correct data type is specified
+template <typename T> int CPIWriter::writeFramesRange(vector<T> &frames, size_t start, size_t end){
 
+    //Ensure there is at least 1 data frame
+    size_t nPix = m_pi_parameters.getWidth()*m_pi_parameters.getHeight();
+    size_t numframes = end - start + 1;
+    if (numframes > 0){
+        //Verify data is of expected size for specified frame range
+        if (frames.size() < nPix*(end+1)) return -2;
+        else{
+            //Ensure that file is open
+            if (isFileOpen()){
+                //Write frames to disk
+                for (size_t k = nPix*start; k < nPix*(end+1); k++){
+                    binary_write(frames[k]);
+                }
+                m_pi_parameters.setNumberOfFrames(m_pi_parameters.getNumberOfFrames() + numframes);
+                return 0;
+            }
+            else return -1;
+        }
+    }
+    else return -3;
+}
 
 
 

@@ -10,3 +10,10 @@ piwrapper.o: piwrapper.cpp piwrapper.hpp PIO.cpp PIO.h KeyValueParser.cpp KeyVal
 	g++ -c piwrapper.cpp PIO.cpp KeyValueParser.cpp -fPIC
 clean:
 	rm test_piwrapper libpiwrapper.so *.o
+copy:
+	install --mode=444 ../../../../asl_library/KeyValueParser.h .
+	install --mode=444 ../../../../asl_library/KeyValueParser.cpp .
+	install --mode=444 ../../../../asl_library/PIO.h .
+	install --mode=444 ../../../../asl_library/PIO.cpp .
+	install --mode=444 ../../../../asl_library/PILib.h .
+	install --mode=444 ../../../../asl_library/PIEnums.h .

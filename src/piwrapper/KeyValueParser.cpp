@@ -1,4 +1,3 @@
-#pragma once
 #include "KeyValueParser.h"
 #include <vector>
 #include <fstream>
@@ -39,7 +38,7 @@ int CKeyValueParser::findKeyValue(const string& key, string& value){
 	if (m_parse_success){
 		int found = -1;
         for (int k = 0; k < kvpairs.size(); k++){
-			if (strcasecmp(key.c_str(), kvpairs[k].key.c_str()) == 0){
+            if (strcmp(key.c_str(), kvpairs[k].key.c_str()) == 0){
 				value = kvpairs[k].value;
 				found = k;
 			}

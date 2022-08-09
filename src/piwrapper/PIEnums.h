@@ -66,52 +66,50 @@ enum ENVI_DATA_TYPE{
 //
 enum PI_PRODUCT_TYPE{
 	UNKNOWN_PRODUCT_TYPE = -1,
-	RAW = 100,
+    INTENSITY = 100,
+    SPATIALLY_MODULATED_INTENSITY = 101,
 	S0 = 0,
 	S1 = 1,
 	S2 = 2,
+    LINEAR_STOKES = 5,
+    LINEAR_STOKES_DOLP_AOP = 6,
 	DOLP = 10,
 	AOP = 11,
+    PCM = 12,
 	TYOCOLOR = 20,
 	FLATFIELD = 200,
 	FLATFIELD_AVERAGE = 201,
-	BAD_PIXEL_MAP = 301,
-	INTENSITY = 3,
-	STOKES = 4,
+	BAD_PIXEL_MAP = 301
 };
 
 
 // Defined PI sensor types
-//  0:	Division of Focal Plane (microgrid polarimeter).
-//  1:	Division of Aperture.
 enum PI_SENSOR_TYPE{
 	UNKNOWN_SENSOR_TYPE = -1,
 	DIVISION_OF_FOCAL_PLANE = 0,
-        DIVISION_OF_TIME = 1,
-        DIVISION_OF_AMPLITUDE = 2,
-        DIVISION_OF_APERTURE = 3,
+    DIVISION_OF_TIME = 1,
+    DIVISION_OF_AMPLITUDE = 2,
+    DIVISION_OF_APERTURE = 3,
+    NON_POLARIMETRIC_SENSOR = 10,
 };
 
 
 // Defined File Formats that Can be Read by CPReader
-//  0: UDRI Polarimetric Image File.
-//  1:	PIRATE 640x480 file as 16-bit unsigned integers. m_width = 640, m_height = 480, m_bpp = 2. PIRATE files
-//		are raw files that have no headers.
-//  2: Polaris Data Format:
 enum PI_SENSOR_NAME {
 	UNKNOWN_SENSOR_NAME = -1,
 	PIRATE_I = 0,
 	PIRATE_II = 1,
 	TYO_LWIRuG = 10,
-	PYXIS = 20,
-	FLIR_MONO_UGRID = 31,
-	FLIR_MONO_DOT = 32,
-	FLIR_RGB_UGRID = 33,
+    PYXIS_LWIR_MONO_UGRID = 20,
+    CORVIS_LWIR_MONO_DOT = 21,
+    BLACKFLY_VISIBLE_MONO_UGRID = 31,
+    BLACKFLY_VISIBLE_MONO_DOT = 32,
+    BLACKFLY_VISIBLE_RGB_UGRID = 33,
 };
 
 
 // Defined File Formats that Can be Read by CPReader
-//  0: UDRI Polarimetric Image File.
+//  0:  Polarimetric Image File.
 //  1:	PIRATE 640x480 file as 16-bit unsigned integers. m_width = 640, m_height = 480, m_bpp = 2. PIRATE files
 //		are raw files that have no headers.
 //  10: Polaris Data Format:
@@ -132,6 +130,7 @@ enum RADIOMETRIC_UNIT{
 	FAHRENHEIT = 3,
 	PHOTONS = 4,
 	MICROFLICKS = 5,
+    RADIANCE = 6,
 };
 
 // Defined wavelength units used by the CPICal and PI Files class
@@ -154,6 +153,7 @@ enum SCALING_TYPE{
 
 // Defined demosaic types
 enum DEMOSAIC_TYPE{
+    DEMOSAICING_NOT_APPLICABLE = -1, //Means sensor does not require demosaicing, such as a DoT sensor
 	NLPN = 0, //Nearest Like-Polarization Neighbor
 	OLF = 1, //Optimal Linear Filtering
 	LABF = 2, //Locally-adaptive Bilateral-Filter
