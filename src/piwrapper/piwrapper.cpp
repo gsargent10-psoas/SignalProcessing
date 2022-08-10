@@ -66,7 +66,7 @@ int readpifloat(float *out, int width, int height, int index)
 
 int closereader()
 {
-	//reader.closeFile();
+	reader.closeFile();
 	return 0;
 }
 

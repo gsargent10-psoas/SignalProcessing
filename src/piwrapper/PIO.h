@@ -265,6 +265,7 @@ public:
 	//Instantiate class and open passed filename for reading (file type is specified regardless of file extension)
 	CPReader(string& filename, PI_FILE_FORMAT fileformat);
 	~CPReader();
+	int closeFile();
 
 	//********************************
 	//Public methods for reading data

@@ -23,11 +23,11 @@ int main()
 	ret = openpiread((char*) filenamefloat.c_str());
 	cout << "openpiread() return: " << ret << endl;
 	cout << "Width: " << getwidth() << ", Height: " << getheight() << endl;
+	closereader();
 	ret = openpiread((char*) filenamedouble.c_str());
 	cout << "openpiread() return: " << ret << endl;
 	cout << "Width: " << getwidth() << ", Height: " << getheight() << endl;
-	
-	//closereader();
+	closereader();
 	return 0;
 
 

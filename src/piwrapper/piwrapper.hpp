@@ -12,7 +12,7 @@ extern "C" int readpidouble(double *out, int width, int height, int index);
 /* return: 0=no error; -1=width, height, and/or frame number are incorrect; */ 
 extern "C" int readpifloat(float *out, int width, int height, int index);
 
-//extern "C" int closereader();
+extern "C" int closereader();
 
 extern "C" int closewriter();
 
