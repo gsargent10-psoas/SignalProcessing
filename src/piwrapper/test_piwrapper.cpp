@@ -28,10 +28,5 @@ int main()
 	cout << "openpiread() return: " << ret << endl;
 	cout << "Width: " << getwidth() << ", Height: " << getheight() << endl;
 	closereader();
-	return 0;
-
-
-
-
-	
+	return 0;	
 }
