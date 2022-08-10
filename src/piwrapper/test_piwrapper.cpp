@@ -16,7 +16,7 @@ int main()
 	ret = openpiread((char*) filename.c_str());
 	cout << "openpiread() return: " << ret << endl;
 	cout << "Width: " << getwidth() << ", Height: " << getheight() << endl;
-	closereader();
+	//closereader();
 	return 0;
 
 
