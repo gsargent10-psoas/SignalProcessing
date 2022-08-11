@@ -16,6 +16,28 @@ class PIWrapper:
         self.readpidouble = self.lib.readpidouble
         self.readpifloat = self.lib.readpifloat
         self.closereader = self.lib.closereader
+        '''
+        enum PI_PRODUCT_TYPE{
+            UNKNOWN_PRODUCT_TYPE = -1,
+            INTENSITY = 100,
+            SPATIALLY_MODULATED_INTENSITY = 101,
+            S0 = 0,
+            S1 = 1,
+            S2 = 2,
+            LINEAR_STOKES = 5,
+            LINEAR_STOKES_DOLP_AOP = 6,
+            DOLP = 10,
+            AOP = 11,
+            PCM = 12,
+            TYOCOLOR = 20,
+            FLATFIELD = 200,
+            FLATFIELD_AVERAGE = 201,
+            BAD_PIXEL_MAP = 301
+        };
+        '''
+        self.PI_PRODUCT_TYPE = {'UNKNOWN_PRODUCT_TYPE':-1,'INTENSITY':100,'SPATIALLY_MODULATED_INTENSITY':101,
+        'S0':0,'S1':1,'S2':2,'LINEAR_STOKES':5,'LINEAR_STOKES_DOLP_AOP':6,'DOLP':10,
+        'AOP':11,'PCM':12,'TYOCOLOR':20,'FLATFIELD':200,'FLATFIELD_AVERAGE':201,'BAD_PIXEL_MAP':301}
         print(self.lib)
         
         # bool openpiwriterdouble(const char *filename, int width, int height, int type, bool overwrite);

@@ -19,13 +19,15 @@ bool openpiread(char *filename)
 int openpiwriterdouble(char *filename, int width, int height, int type, bool overwrite)
 {
 	std::string cpp_filename((const char*) filename);
-	return writer.openFile(cpp_filename, (size_t) width, (size_t) height, ENVI_DATA_TYPE::ENVI_DOUBLE, true, PI_PRODUCT_TYPE::INTENSITY, overwrite);
+	//return writer.openFile(cpp_filename, (size_t) width, (size_t) height, ENVI_DATA_TYPE::ENVI_DOUBLE, true, PI_PRODUCT_TYPE::INTENSITY, overwrite);
+	return writer.openFile(cpp_filename, (size_t) width, (size_t) height, ENVI_DATA_TYPE::ENVI_DOUBLE, true, (PI_PRODUCT_TYPE)type, overwrite);
 }
 
 int openpiwriterfloat(char *filename, int width, int height, int type, bool overwrite)
 {
 	std::string cpp_filename((const char*) filename);
-	return writer.openFile(cpp_filename, (size_t) width, (size_t) height, ENVI_DATA_TYPE::ENVI_FLOAT, true, PI_PRODUCT_TYPE::INTENSITY, overwrite);
+	//return writer.openFile(cpp_filename, (size_t) width, (size_t) height, ENVI_DATA_TYPE::ENVI_FLOAT, true, PI_PRODUCT_TYPE::INTENSITY, overwrite);
+	return writer.openFile(cpp_filename, (size_t) width, (size_t) height, ENVI_DATA_TYPE::ENVI_FLOAT, true, (PI_PRODUCT_TYPE)type, overwrite);
 }
 
 /* return: 0=no error; -1=width, height, and/or frame number are incorrect; */ 
