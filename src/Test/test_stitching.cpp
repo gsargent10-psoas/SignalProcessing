@@ -16,7 +16,6 @@ int main()
 {
 	int image_y = 2048; int image_x = 2448; int sub_x = 64; int sub_y = 64; int overlap = 8;
 	int error = -99;
-	int* _error = &error; 
 	double* TestImage; double* SubImages; double* StitchImage;
 
 	int sub_depth = getNumberSubImages22(image_y,image_x,sub_y,sub_x,overlap);
@@ -44,12 +43,12 @@ int main()
 	formImage(TestImage, image_y, image_x);
 	
 	
-	formSubImage22(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, _error);
+	error = formSubImage22(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth);
 	cout << endl << "formSubImage22 error: " << error <<endl;
 	error = -99;
 	
 
-	Stitching(StitchImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth, _error); //Passing in the empty Stitch image
+	error = Stitching(StitchImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth); //Passing in the empty Stitch image
 	cout << endl << "Stitching error: " << error <<endl;
 	error = -99;
 	

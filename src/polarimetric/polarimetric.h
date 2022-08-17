@@ -13,11 +13,11 @@ int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int ove
     
 
 /* The stitching algroithim */
-void Stitching(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error);
+int Stitching(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub);
 
 
 /* Generate sub images from full size image. Assume image is 2-dimensional.
 status: 0 = succes, 1 = success, but number of subimages generated does not equal num_sub
 -1 overlap is too large, -2 subimage is too large */
-void formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error);
+int formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub);
 

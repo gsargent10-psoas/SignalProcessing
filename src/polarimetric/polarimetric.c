@@ -133,7 +133,7 @@ int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int ove
 }
 
 /* The stitching algroithim */
-void Stitching(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error){
+int Stitching(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub){
 	
 	int xs = 0; int xe = sub_cols -1;
 	int ys = 0; int ye = sub_rows -1;
@@ -144,18 +144,19 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 	int index = 0;
 	int count = 0;
 	int subIndex = 0;
+	int error=-99;
 
 	for (; ys < image_rows-1;){
 		xs = 0;
 		xe = sub_cols -1;
 		for (; xs < image_cols-1;){
 			if(count >= num_sub){
-				*error = 2;
-				return;
+				error = 2;
+				return error;
 			}
 			else if(xs >= image_cols-1 || ys >= image_rows-1){
-				*error = 1;	
-				return;
+				error = 1;	
+				return error;
 			
 			}
 			
@@ -169,8 +170,8 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 						if (subIndex >= sub_cols*sub_rows*num_sub)
 						{
-							*error = subIndex;	
-							return;
+							error = subIndex;	
+							return error;
 						}
 						image[index] = sub_images[subIndex]; 
 					}
@@ -187,8 +188,8 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 						if (subIndex >= sub_cols*sub_rows*num_sub)
 						{
-							*error = subIndex;	
-							return;
+							error = subIndex;	
+							return error;
 						}
 						image[index] = sub_images[subIndex]; 
 					}
@@ -209,8 +210,8 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							image[index] = sub_images[subIndex]; 
 						}
@@ -227,8 +228,8 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 						if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 						image[index] = sub_images[subIndex]; 
 					}
@@ -248,8 +249,8 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							image[index] = sub_images[subIndex]; 
 						}
@@ -277,8 +278,8 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							image[index] = sub_images[subIndex]; 
 						}
@@ -301,8 +302,8 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							image[index] = sub_images[subIndex]; 
 						}
@@ -323,8 +324,8 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							image[index] = sub_images[subIndex]; 
 						}
@@ -346,8 +347,8 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							image[index] = sub_images[subIndex]; 
 						}
@@ -360,12 +361,13 @@ void Stitching(double* image, int image_rows, int image_cols, double* sub_images
 		}
 		step22(&ys,&ye,sub_rows,overlap);
 	}
-	*error = 0;	
+	error = 0;	
+	return error;
 }
 /* Generate sub images from full size image. Assume image is 2-dimensional.
 status: 0 = succes, 1 = success, but number of subimages generated < num_sub, 2 = success, but number of subimages generated > num_sub,
 -1 overlap is too large, -2 subimage is too large */
-void formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error)
+int formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub)
 {
 	int xs = 0; int xe = sub_cols -1;
 	int ys = 0; int ye = sub_rows -1;
@@ -376,18 +378,19 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 	int index = 0;
 	int count = 0;
 	int subIndex = 0;
+	int error = -99;
 
 	for (; ys < image_rows-1;){
 		xs = 0;
 		xe = sub_cols -1;
 		for (; xs < image_cols-1;){
 			if(count >= num_sub){
-				*error = 2;
-				return;
+				error = 2;
+				return error;
 			}
 			else if(xs >= image_cols-1 || ys >= image_rows-1){
-				*error = 1;	
-				return;
+				error = 1;	
+				return error;
 			
 			}
 			//exceed pixel count on the bottom and right
@@ -400,8 +403,8 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							sub_images[subIndex] = 0.0;
 						}
@@ -409,8 +412,8 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							sub_images[subIndex] = 0.0;
 						}
@@ -418,8 +421,8 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							sub_images[subIndex] = 0.0;
 						}
@@ -428,8 +431,8 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							sub_images[subIndex] = image[index]; 
 							
@@ -447,8 +450,8 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							sub_images[subIndex] = 0.0;
 						}
@@ -458,8 +461,8 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							sub_images[subIndex] = image[index]; 
 							
@@ -477,8 +480,8 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;	
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							sub_images[subIndex] = 0.0;
 						}
@@ -487,8 +490,8 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							sub_images[subIndex] = image[index]; 
 						}
@@ -510,8 +513,8 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 							if (subIndex >= sub_cols*sub_rows*num_sub)
 							{
-								*error = subIndex;	
-								return;
+								error = subIndex;	
+								return error;
 							}
 							sub_images[subIndex] = image[index]; 
 						}
@@ -525,5 +528,6 @@ void formSubImage22(double* image, int image_rows, int image_cols, double* sub_i
 		}
 		step22(&ys,&ye,sub_rows,overlap);
 	}
-	*error = 0;	
+	error = 0;
+	return error;	
 }
