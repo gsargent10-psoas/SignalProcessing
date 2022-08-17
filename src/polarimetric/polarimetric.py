@@ -41,10 +41,10 @@ class Polarimetric:
         np.ascontiguousarray(s2, dtype=np.double),np.ascontiguousarray(data, dtype=np.double),w,h,modulation)
 
     # void computeintensity(double *s0,double *s1, double *s2, double *out_data, int width, int height, double angle);
-    def computeintensity(self,s0:np.double,s1:np.double,s2:np.double,angle:Double)->int:
+    def computeintensity(self,s0:np.double,s1:np.double,s2:np.double,data:np.double,angle:Double)->int:
         h,w=s0.shape
         self._computeintensity(np.ascontiguousarray(s0, dtype=np.double),np.ascontiguousarray(s1, dtype=np.double),
-        np.ascontiguousarray(s2, dtype=np.double),w,h,angle)
+        np.ascontiguousarray(s2, dtype=np.double),np.ascontiguousarray(data, dtype=np.double),w,h,angle)
 
     # int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int overlap);
     def getNumberSubImages22(self,image_y:int,image_x:int,sub_y:int,sub_x:int,overlap:int)->int:
@@ -58,7 +58,7 @@ class Polarimetric:
         np.ascontiguousarray(sub_image, dtype=np.double),sy,sx,overlap,num)
 
     #int formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub);
-    def stitching(self,image:np.double,sub_image:np.double,overlap:int)->int:
+    def formSubImage22(self,image:np.double,sub_image:np.double,overlap:int)->int:
         iy,ix=image.shape
         sy,sx,num=sub_image.shape
         return self._formSubImage22(np.ascontiguousarray(image, dtype=np.double),iy,ix,
