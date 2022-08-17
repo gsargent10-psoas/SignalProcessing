@@ -90,6 +90,7 @@ print('getheight() return:',pw.getheight())
 s0 = np.empty([pw.getheight(),pw.getwidth()],np.double)
 s1 = np.empty([pw.getheight(),pw.getwidth()],np.double)
 s2 = np.empty([pw.getheight(),pw.getwidth()],np.double)
+print("h is ", h, "w is " , w)
 h,w = s0.shape
 ret = pw.readpidouble(s0,w,h,0)
 print('readpi() return:',ret)
