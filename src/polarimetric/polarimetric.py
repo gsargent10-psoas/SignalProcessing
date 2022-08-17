@@ -24,10 +24,10 @@ class Polarimetric:
         self.getNumberSubImages22.restype = ctypes.c_int
         self.getNumberSubImages22.argtypes = [ctypes.c_int,ctypes.c_int,ctypes.c_int, ctypes.c_int,ctypes.c_int]
 
-        #void Stitching(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error);
-        self.Stitching.restype = None
-        self.Stitching.argtypes = [ndpointer(ctypes.c_double, flags="C_Contiguous"),ctypes.c_int, ctypes.c_int, ndpointer(ctypes.c_double, flags="C_Contiguous"),ctypes.c_int,ctypes.c_int,ctypes.c_int, ctypes.c_int, POINTER(ctypes.c_int)]
+        #int Stitching(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error);
+        self.Stitching.restype = ctypes.c_int
+        self.Stitching.argtypes = [ndpointer(ctypes.c_double, flags="C_Contiguous"),ctypes.c_int, ctypes.c_int, ndpointer(ctypes.c_double, flags="C_Contiguous"),ctypes.c_int,ctypes.c_int,ctypes.c_int, ctypes.c_int]
 
-        #void formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error);
-        self.formSubImage22.restype = None
-        self.formSubImage22.argtypes = [ndpointer(dtype=ctypes.c_double, ndim=2, flags="C_Contiguous"),ctypes.c_int, ctypes.c_int, ndpointer(dtype=ctypes.c_double, ndim=3, flags="C_Contiguous"),ctypes.c_int,ctypes.c_int,ctypes.c_int, ctypes.c_int, POINTER(ctypes.c_int)]
+        #int formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub, int* error);
+        self.formSubImage22.restype = ctypes.c_int
+        self.formSubImage22.argtypes = [ndpointer(dtype=ctypes.c_double, ndim=2, flags="C_Contiguous"),ctypes.c_int, ctypes.c_int, ndpointer(dtype=ctypes.c_double, ndim=3, flags="C_Contiguous"),ctypes.c_int,ctypes.c_int,ctypes.c_int, ctypes.c_int]
