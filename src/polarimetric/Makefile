@@ -4,6 +4,8 @@ polarimetric.so: polarimetric.o
 	install --mode=444 polarimetric.h ../Test
 	cp libpolarimetric.so ../../../Deep-Learning-Infrastructure/src/python
 	install --mode=444 polarimetric.py ../../../Deep-Learning-Infrastructure/src/python
+	cp libpolarimetric.so ../../../Deep-Learning-GUI/src/python
+	install --mode=444 polarimetric.py ../../../Deep-Learning-GUI/src/python
 polarimetric.o: polarimetric.c polarimetric.h
 	gcc -c polarimetric.c
 clean:
