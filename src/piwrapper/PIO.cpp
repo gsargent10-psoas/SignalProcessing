@@ -1237,18 +1237,6 @@ CPReader::~CPReader(){
 	if (m_fileopen)	m_fin.close();
 }
 
-// 0 is returned if the data file was closed and the header file was successfully written to disk
-// -1 is returned if no data file is currently open
-int CPReader::closeFile(){
-
-	if (isFileOpen()){
-		m_fin.close();
-		return 0;
-	}
-	else return -1;
-}
-
-
 
 //Get Methods
 
