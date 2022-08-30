@@ -43,12 +43,12 @@ int main()
 	formImage(TestImage, image_y, image_x);
 	
 	
-	error = formSubImage22(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth);
+	error = formSubImage22_double(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth);
 	cout << endl << "formSubImage22 error: " << error <<endl;
 	error = -99;
 	
 
-	error = Stitching(StitchImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth); //Passing in the empty Stitch image
+	error = stitchsubimages_double(StitchImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth); //Passing in the empty Stitch image
 	cout << endl << "Stitching error: " << error <<endl;
 	error = -99;
 	
