@@ -246,7 +246,7 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 
 	int index = 0;
 	int count = 0;
-	int subIndex = 0;
+	int subindex = 0;
 	int error=-99;
 
 	for (; ys < image_rows-1;){
@@ -270,13 +270,14 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 					sxs = 0;
 					for (int c = xs; c <= xe-overlap; c++, sxs++){
 						index = c+r*image_cols;
-						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-						if (subIndex >= sub_cols*sub_rows*num_sub)
+						//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+						if (subindex >= sub_cols*sub_rows*num_sub)
 						{
-							error = subIndex;	
+							error = subindex;	
 							return error;
 						}
-						image[index] = sub_images[subIndex]; 
+						image[index] = sub_images[subindex]; 
 					}
 				}	
 			}
@@ -288,13 +289,14 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 					sxs = 0+overlap;
 					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
 						index = c+r*image_cols;
-						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-						if (subIndex >= sub_cols*sub_rows*num_sub)
+						//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+						if (subindex >= sub_cols*sub_rows*num_sub)
 						{
-							error = subIndex;	
+							error = subindex;	
 							return error;
 						}
-						image[index] = sub_images[subIndex]; 
+						image[index] = sub_images[subindex]; 
 					}
 				}	
 			}
@@ -310,13 +312,14 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 						}
 						else{
 							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
+							//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+							if (subindex >= sub_cols*sub_rows*num_sub)
 							{
-								error = subIndex;	
+								error = subindex;	
 								return error;
 							}
-							image[index] = sub_images[subIndex]; 
+							image[index] = sub_images[subindex]; 
 						}
 					}
 				}
@@ -328,13 +331,14 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 					sxs = 0;
 					for (int c = xs; c <= xe-overlap; c++, sxs++){
 						index = c+r*image_cols;
-						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-						if (subIndex >= sub_cols*sub_rows*num_sub)
+						//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+						if (subindex >= sub_cols*sub_rows*num_sub)
 							{
-								error = subIndex;	
+								error = subindex;	
 								return error;
 							}
-						image[index] = sub_images[subIndex]; 
+						image[index] = sub_images[subindex]; 
 					}
 				}
 			}
@@ -349,13 +353,14 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 						}
 						else{
 							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
+							//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+							if (subindex >= sub_cols*sub_rows*num_sub)
 							{
-								error = subIndex;	
+								error = subindex;	
 								return error;
 							}
-							image[index] = sub_images[subIndex]; 
+							image[index] = sub_images[subindex]; 
 						}
 					}
 				}
@@ -378,13 +383,14 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 						}
 						else {
 							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
+							//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+							if (subindex >= sub_cols*sub_rows*num_sub)
 							{
-								error = subIndex;	
+								error = subindex;	
 								return error;
 							}
-							image[index] = sub_images[subIndex]; 
+							image[index] = sub_images[subindex]; 
 						}
 					}
 				}		
@@ -402,13 +408,14 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 						else{
 							
 							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
+							//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+							if (subindex >= sub_cols*sub_rows*num_sub)
 							{
-								error = subIndex;	
+								error = subindex;	
 								return error;
 							}
-							image[index] = sub_images[subIndex]; 
+							image[index] = sub_images[subindex]; 
 						}
 					}
 				}
@@ -424,13 +431,14 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 						}
 						else{
 							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
+							//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+							if (subindex >= sub_cols*sub_rows*num_sub)
 							{
-								error = subIndex;	
+								error = subindex;	
 								return error;
 							}
-							image[index] = sub_images[subIndex]; 
+							image[index] = sub_images[subindex]; 
 						}
 					}
 				}
@@ -447,13 +455,14 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 							// do nothing
 						}
 						else{
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
+							//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+							if (subindex >= sub_cols*sub_rows*num_sub)
 							{
-								error = subIndex;	
+								error = subindex;	
 								return error;
 							}
-							image[index] = sub_images[subIndex]; 
+							image[index] = sub_images[subindex]; 
 						}
 					}
 				}
@@ -478,7 +487,7 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 
 	int index = 0;
 	int count = 0;
-	int subIndex = 0;
+	int subindex = 0;
 	int error=-99;
 
 	for (; ys < image_rows-1;){
@@ -502,13 +511,14 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 					sxs = 0;
 					for (int c = xs; c <= xe-overlap; c++, sxs++){
 						index = c+r*image_cols;
-						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-						if (subIndex >= sub_cols*sub_rows*num_sub)
+						//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+						if (subindex >= sub_cols*sub_rows*num_sub)
 						{
-							error = subIndex;	
+							error = subindex;	
 							return error;
 						}
-						image[index] = sub_images[subIndex]; 
+						image[index] = sub_images[subindex]; 
 					}
 				}	
 			}
@@ -520,13 +530,14 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 					sxs = 0+overlap;
 					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
 						index = c+r*image_cols;
-						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-						if (subIndex >= sub_cols*sub_rows*num_sub)
+						//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+						if (subindex >= sub_cols*sub_rows*num_sub)
 						{
-							error = subIndex;	
+							error = subindex;	
 							return error;
 						}
-						image[index] = sub_images[subIndex]; 
+						image[index] = sub_images[subindex]; 
 					}
 				}	
 			}
@@ -542,13 +553,14 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 						}
 						else{
 							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
+							//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+							if (subindex >= sub_cols*sub_rows*num_sub)
 							{
-								error = subIndex;	
+								error = subindex;	
 								return error;
 							}
-							image[index] = sub_images[subIndex]; 
+							image[index] = sub_images[subindex]; 
 						}
 					}
 				}
@@ -560,13 +572,14 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 					sxs = 0;
 					for (int c = xs; c <= xe-overlap; c++, sxs++){
 						index = c+r*image_cols;
-						subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-						if (subIndex >= sub_cols*sub_rows*num_sub)
+						//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+						subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+						if (subindex >= sub_cols*sub_rows*num_sub)
 							{
-								error = subIndex;	
+								error = subindex;	
 								return error;
 							}
-						image[index] = sub_images[subIndex]; 
+						image[index] = sub_images[subindex]; 
 					}
 				}
 			}
@@ -581,13 +594,14 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 						}
 						else{
 							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
+							//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+							if (subindex >= sub_cols*sub_rows*num_sub)
 							{
-								error = subIndex;	
+								error = subindex;	
 								return error;
 							}
-							image[index] = sub_images[subIndex]; 
+							image[index] = sub_images[subindex]; 
 						}
 					}
 				}
@@ -610,13 +624,14 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 						}
 						else {
 							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
+							//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+							if (subindex >= sub_cols*sub_rows*num_sub)
 							{
-								error = subIndex;	
+								error = subindex;	
 								return error;
 							}
-							image[index] = sub_images[subIndex]; 
+							image[index] = sub_images[subindex]; 
 						}
 					}
 				}		
@@ -634,13 +649,14 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 						else{
 							
 							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
+							//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+							if (subindex >= sub_cols*sub_rows*num_sub)
 							{
-								error = subIndex;	
+								error = subindex;	
 								return error;
 							}
-							image[index] = sub_images[subIndex]; 
+							image[index] = sub_images[subindex]; 
 						}
 					}
 				}
@@ -656,13 +672,14 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 						}
 						else{
 							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
+							//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+							if (subindex >= sub_cols*sub_rows*num_sub)
 							{
-								error = subIndex;	
+								error = subindex;	
 								return error;
 							}
-							image[index] = sub_images[subIndex]; 
+							image[index] = sub_images[subindex]; 
 						}
 					}
 				}
@@ -679,13 +696,14 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 							// do nothing
 						}
 						else{
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
+							//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+							subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
+							if (subindex >= sub_cols*sub_rows*num_sub)
 							{
-								error = subIndex;	
+								error = subindex;	
 								return error;
 							}
-							image[index] = sub_images[subIndex]; 
+							image[index] = sub_images[subindex]; 
 						}
 					}
 				}
@@ -743,23 +761,27 @@ int formSubImage22_float(float* image, int image_rows, int image_cols, float* su
 						sxs = 0; // start on far left
 						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
 							if(c > image_cols-1 && r > image_rows-1){ // exceed the image in both columns and rows
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
 							else if (c > image_cols-1){ // exceed the image in columns
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
 							else if(r > image_rows-1){ // exceed the image in rows
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
 							else { // within bounds of image
 								index = c+r*image_cols;
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; } // segmentation fault
 								sub_images[subindex] = image[index]; // good value
 							}
@@ -772,13 +794,15 @@ int formSubImage22_float(float* image, int image_rows, int image_cols, float* su
 						sxs = 0; 
 						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
 							if(c > image_cols-1){ // exceed the image in columns
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
 							else{ // within bounds of image
 								index = c+r*image_cols;
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = image[index]; // good value
 							}
@@ -791,13 +815,15 @@ int formSubImage22_float(float* image, int image_rows, int image_cols, float* su
 						sxs = 0;
 						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
 							if(r > image_rows-1){ //exceed the image in rows
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;	
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;	
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
 							else{ // within bounds of image
 								index = c+r*image_cols;
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = image[index]; // good value
 							}
@@ -812,7 +838,8 @@ int formSubImage22_float(float* image, int image_rows, int image_cols, float* su
 							index = c+r*image_cols;
 							if (index >= image_cols*image_rows) { /* do nothing */ } // segmentation fault
 							else{
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = image[index]; // good value
 							}
@@ -859,23 +886,27 @@ int formSubImage22_double(double* image, int image_rows, int image_cols, double*
 						sxs = 0; // start on far left
 						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
 							if(c > image_cols-1 && r > image_rows-1){ // exceed the image in both columns and rows
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
 							else if (c > image_cols-1){ // exceed the image in columns
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
 							else if(r > image_rows-1){ // exceed the image in rows
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
 							else { // within bounds of image
 								index = c+r*image_cols;
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; } // segmentation fault
 								sub_images[subindex] = image[index]; // good value
 							}
@@ -888,13 +919,15 @@ int formSubImage22_double(double* image, int image_rows, int image_cols, double*
 						sxs = 0; 
 						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
 							if(c > image_cols-1){ // exceed the image in columns
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
 							else{ // within bounds of image
 								index = c+r*image_cols;
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = image[index]; // good value
 							}
@@ -907,13 +940,15 @@ int formSubImage22_double(double* image, int image_rows, int image_cols, double*
 						sxs = 0;
 						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
 							if(r > image_rows-1){ //exceed the image in rows
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;	
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;	
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
 							else{ // within bounds of image
 								index = c+r*image_cols;
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = image[index]; // good value
 							}
@@ -928,7 +963,8 @@ int formSubImage22_double(double* image, int image_rows, int image_cols, double*
 							index = c+r*image_cols;
 							if (index >= image_cols*image_rows) { /* do nothing */ } // segmentation fault
 							else{
-								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
 								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
 								sub_images[subindex] = image[index]; // good value
 							}
