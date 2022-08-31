@@ -49,11 +49,11 @@ class Polarimetric:
 
         #int formSubImage22(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub);
         self._formSubImage22_double.restype = ctypes.c_int
-        self._formSubImage22_double.argtypes = [ndpointer(dtype=np.double, ndim=2, flags="C_Contiguous"),ctypes.c_int, ctypes.c_int, 
+        self._formSubImage22_double.argtypes = [ndpointer(dtype=np.double, flags="C_Contiguous"),ctypes.c_int, ctypes.c_int, 
         ndpointer(dtype=np.double, ndim=3, flags="C_Contiguous"),ctypes.c_int,ctypes.c_int,ctypes.c_int, ctypes.c_int]
         self._formSubImage22_float.restype = ctypes.c_int
-        self._formSubImage22_float.argtypes = [ndpointer(dtype=np.float32, ndim=2, flags="C_Contiguous"),ctypes.c_int, ctypes.c_int, 
-        ndpointer(dtype=np.float32, ndim=3, flags="C_Contiguous"),ctypes.c_int,ctypes.c_int,ctypes.c_int, ctypes.c_int]
+        self._formSubImage22_float.argtypes = [ndpointer(dtype=np.float32, flags="C_Contiguous"),ctypes.c_int, ctypes.c_int, 
+        ndpointer(dtype=np.float32, flags="C_Contiguous"),ctypes.c_int,ctypes.c_int,ctypes.c_int, ctypes.c_int]
 
     # int formugrid(double *s0, double *s1, double *s2, double *out_data, int width, int height, int modulation);
     def formugrid(self,s0:np.double,s1:np.double,s2:np.double,data:np.double,modulation:int)->int:
@@ -102,3 +102,4 @@ class Polarimetric:
         sy,sx,num=sub_image.shape
         return self._formSubImage22_float(np.ascontiguousarray(image, dtype=np.float32),iy,ix,
         np.ascontiguousarray(sub_image, dtype=np.float32),sy,sx,overlap,num)
+        

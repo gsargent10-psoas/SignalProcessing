@@ -9,9 +9,7 @@ void step22(int *sp, int *ep, int width, int overlap)
 {
 	/* sp = starting pixel, ep = ending pixel, width = width of image, overlap = desired overlap */
 	*sp = *ep-(2*overlap)+1;
-	if(*sp % 2 != 0){ // need to always start on an even pixel
-		*sp = *sp - 1;
-	}	
+	if(*sp % 2 != 0){ *sp = *sp + 1; } // need to always start on an even pixel (changed to +1 instead of -1)	
 	*ep = *sp + width - 1;
 }
 
@@ -701,337 +699,246 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 	error = 0;	
 	return error;
 }
+
+/* Return the image case. */
+int casenumber(int image_rows, int image_cols,int sub_rows, int sub_cols, int num_sub, int count, int xs, int xe, int ys, int ye)
+{
+	if(count >= num_sub) { return 1; }// Case 1, more subimages available than allocated
+	else if(xs >= image_cols-1 || ys >= image_rows-1) { return 2; } // Case 2, starting pixel exceeds image dimensions
+	else if(xe > image_cols-1 && ye > image_rows-1) { return 3; } // Case 3, exceed pixel count on the bottom and right
+	else if(xe > image_cols-1) { return 4; } // exceed pixel count on the right edge
+	else if(ye > image_cols-1) { return 5; } // exceed pixel count on the bottom edge
+	else { return 0; } // all is good
+}
 /* Generate sub images from full size image. Assume image is 2-dimensional.
-status: 0 = succes, 1 = success, but number of subimages generated < num_sub, 2 = success, but number of subimages generated > num_sub,
+status: 0 = succes, 1 = success, but more subimages available than allocated, 2 = starting pixel exceeds image dimensions,
 -1 overlap is too large, -2 subimage is too large */
 int formSubImage22_float(float* image, int image_rows, int image_cols, float* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub)
 {
-	int xs = 0; int xe = sub_cols -1;
-	int ys = 0; int ye = sub_rows -1;
-	
-	int sxs = 0; 
-	int sys = 0; 
+	int xs = 0; // starting column image pixel 
+	int xe = sub_cols -1; // ending column pixel
+	int ys = 0; // starting row image pixel 
+	int ye = sub_rows -1; // ending row pixel
+	int sxs = 0; // starting column subimage pixel
+	int sys = 0; // starting row subimage pixel
+	int index = 0; // index into the image
+	int count = 0; // number of subimages created
+	int subindex = 0; // index into the subimage
+	int casenum= 0; // place holder for the image case
 
-	int index = 0;
-	int count = 0;
-	int subIndex = 0;
-	int error = -99;
-
-	for (; ys < image_rows-1;){
-		xs = 0;
-		xe = sub_cols -1;
-		for (; xs < image_cols-1;){
-			if(count >= num_sub){
-				error = 2;
-				return error;
-			}
-			else if(xs >= image_cols-1 || ys >= image_rows-1){
-				error = 1;	
-				return error;
-			
-			}
-			//exceed pixel count on the bottom and right
-			else if(xe > image_cols-1 && ye > image_rows-1){
-				sys = 0;
-				for (int r = ys; r <= ye; r++, sys++){
-					sxs = 0;
-					for (int c = xs; c <= xe; c++, sxs++){
-						if(c > image_cols-1 && r > image_rows-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
+	for (; ys < image_rows-1;){ // iterate over the rows last in order to keep C convention
+		xs = 0; // each time we start a new row, start on the first column
+		xe = sub_cols -1; // move along the columns until you reach the end of the sub image boundary
+		for (; xs < image_cols-1;){ // iterate over columns first, then rows in order to keep C convention
+			casenum = casenumber(image_rows,image_cols,sub_rows,sub_cols,num_sub,count,xs,xe,ys,ye);
+			switch(casenum) 
+			{
+				case 1: // Case 1, more subimages available than allocated
+					return 1;
+				case 2: // Case 2, starting pixel exceeds image dimensions
+					return 2;
+				case 3: // Case 3, exceed pixel count on the bottom and right
+					sys = 0; // always start in top-left corner of subimage
+					for (int r = ys; r <= ye; r++, sys++){ // iterate over rows last
+						sxs = 0; // start on far left
+						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
+							if(c > image_cols-1 && r > image_rows-1){ // exceed the image in both columns and rows
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
-							sub_images[subIndex] = 0.0;
-						}
-						else if (c > image_cols-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
+							else if (c > image_cols-1){ // exceed the image in columns
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
-							sub_images[subIndex] = 0.0;
-						}
-						else if(r > image_rows-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
+							else if(r > image_rows-1){ // exceed the image in rows
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
-							sub_images[subIndex] = 0.0;
+							else { // within bounds of image
+								index = c+r*image_cols;
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; } // segmentation fault
+								sub_images[subindex] = image[index]; // good value
+							}
 						}
-						else {
+					}
+					break;
+				case 4: // exceed pixel count on the right edge
+					sys = 0; // always start in top-left corner of subimage
+					for (int r = ys; r <= ye; r++, sys++){ // iterate over rows last
+						sxs = 0; 
+						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
+							if(c > image_cols-1){ // exceed the image in columns
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
+							}
+							else{ // within bounds of image
+								index = c+r*image_cols;
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = image[index]; // good value
+							}
+						}
+					}
+					break;
+				case 5: // exceed pixel count on the bottom edge
+					sys = 0; // always start in top-left corner of subimage
+					for (int r = ys; r <= ye; r++, sys++){ // iterate over rows last
+						sxs = 0;
+						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
+							if(r > image_rows-1){ //exceed the image in rows
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;	
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
+							}
+							else{ // within bounds of image
+								index = c+r*image_cols;
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = image[index]; // good value
+							}
+						}
+					}
+					break;
+				default: // all is good
+					sys = 0; // always start in top-left corner of subimage
+					for (int r = ys; r <= ye; r++, sys++){ // iterate over rows last
+						sxs = 0;
+						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
 							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
+							if (index >= image_cols*image_rows) { /* do nothing */ } // segmentation fault
+							else{
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = image[index]; // good value
 							}
-							sub_images[subIndex] = image[index]; 
-							
 						}
 					}
-				}		
 			}
-			//exceed pixel count on the right edge
-			else if(xe > image_cols-1){
-				sys = 0;
-				for (int r = ys; r <= ye; r++, sys++){
-					sxs = 0;
-					for (int c = xs; c <= xe; c++, sxs++){
-						if(c > image_cols-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
-							}
-							sub_images[subIndex] = 0.0;
-						}
-						else{
-							
-							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
-							}
-							sub_images[subIndex] = image[index]; 
-							
-						}
-					}
-				}
-			}
-			//exceed pixel count on the bottom edge
-			else if(ye > image_cols-1){
-				sys = 0;
-				for (int r = ys; r <= ye; r++, sys++){
-					sxs = 0;
-					for (int c = xs; c <= xe; c++, sxs++){
-						if(r > image_rows-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;	
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
-							}
-							sub_images[subIndex] = 0.0;
-						}
-						else{
-							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
-							}
-							sub_images[subIndex] = image[index]; 
-						}
-					}
-				}
-			}
-			// all is good
-			else {
-				sys = 0;
-				for (int r = ys; r <= ye; r++, sys++){
-					sxs = 0;
-					for (int c = xs; c <= xe; c++, sxs++){
-						index = c+r*image_cols;
-						if (index >= image_cols*image_rows)
-						{
-							// do nothing
-						}
-						else{
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
-							}
-							sub_images[subIndex] = image[index]; 
-						}
-						
-					}
-				}
-
-			}
-			count = count + 1;
+			count = count + 1; // increment subimage count
 			step22(&xs,&xe,sub_cols,overlap);
 		}
 		step22(&ys,&ye,sub_rows,overlap);
 	}
-	error = 0;
-	return error;	
+	return 0;	
 }
 /* Generate sub images from full size image. Assume image is 2-dimensional.
 status: 0 = succes, 1 = success, but number of subimages generated < num_sub, 2 = success, but number of subimages generated > num_sub,
 -1 overlap is too large, -2 subimage is too large */
 int formSubImage22_double(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub)
 {
-	int xs = 0; int xe = sub_cols -1;
-	int ys = 0; int ye = sub_rows -1;
-	
-	int sxs = 0; 
-	int sys = 0; 
+	int xs = 0; // starting column image pixel 
+	int xe = sub_cols -1; // ending column pixel
+	int ys = 0; // starting row image pixel 
+	int ye = sub_rows -1; // ending row pixel
+	int sxs = 0; // starting column subimage pixel
+	int sys = 0; // starting row subimage pixel
+	int index = 0; // index into the image
+	int count = 0; // number of subimages created
+	int subindex = 0; // index into the subimage
+	int casenum= 0; // place holder for the image case
 
-	int index = 0;
-	int count = 0;
-	int subIndex = 0;
-	int error = -99;
-
-	for (; ys < image_rows-1;){
-		xs = 0;
-		xe = sub_cols -1;
-		for (; xs < image_cols-1;){
-			if(count >= num_sub){
-				error = 2;
-				return error;
-			}
-			else if(xs >= image_cols-1 || ys >= image_rows-1){
-				error = 1;	
-				return error;
-			
-			}
-			//exceed pixel count on the bottom and right
-			else if(xe > image_cols-1 && ye > image_rows-1){
-				sys = 0;
-				for (int r = ys; r <= ye; r++, sys++){
-					sxs = 0;
-					for (int c = xs; c <= xe; c++, sxs++){
-						if(c > image_cols-1 && r > image_rows-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
+	for (; ys < image_rows-1;){ // iterate over the rows last in order to keep C convention
+		xs = 0; // each time we start a new row, start on the first column
+		xe = sub_cols -1; // move along the columns until you reach the end of the sub image boundary
+		for (; xs < image_cols-1;){ // iterate over columns first, then rows in order to keep C convention
+			casenum = casenumber(image_rows,image_cols,sub_rows,sub_cols,num_sub,count,xs,xe,ys,ye);
+			switch(casenum) 
+			{
+				case 1: // Case 1, more subimages available than allocated
+					return 1;
+				case 2: // Case 2, starting pixel exceeds image dimensions
+					return 2;
+				case 3: // Case 3, exceed pixel count on the bottom and right
+					sys = 0; // always start in top-left corner of subimage
+					for (int r = ys; r <= ye; r++, sys++){ // iterate over rows last
+						sxs = 0; // start on far left
+						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
+							if(c > image_cols-1 && r > image_rows-1){ // exceed the image in both columns and rows
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
-							sub_images[subIndex] = 0.0;
-						}
-						else if (c > image_cols-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
+							else if (c > image_cols-1){ // exceed the image in columns
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
-							sub_images[subIndex] = 0.0;
-						}
-						else if(r > image_rows-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
+							else if(r > image_rows-1){ // exceed the image in rows
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
 							}
-							sub_images[subIndex] = 0.0;
+							else { // within bounds of image
+								index = c+r*image_cols;
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; } // segmentation fault
+								sub_images[subindex] = image[index]; // good value
+							}
 						}
-						else {
+					}
+					break;
+				case 4: // exceed pixel count on the right edge
+					sys = 0; // always start in top-left corner of subimage
+					for (int r = ys; r <= ye; r++, sys++){ // iterate over rows last
+						sxs = 0; 
+						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
+							if(c > image_cols-1){ // exceed the image in columns
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
+							}
+							else{ // within bounds of image
+								index = c+r*image_cols;
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = image[index]; // good value
+							}
+						}
+					}
+					break;
+				case 5: // exceed pixel count on the bottom edge
+					sys = 0; // always start in top-left corner of subimage
+					for (int r = ys; r <= ye; r++, sys++){ // iterate over rows last
+						sxs = 0;
+						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
+							if(r > image_rows-1){ //exceed the image in rows
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;	
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = 0.0; // outside of image bounds so just fill with zeros
+							}
+							else{ // within bounds of image
+								index = c+r*image_cols;
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = image[index]; // good value
+							}
+						}
+					}
+					break;
+				default: // all is good
+					sys = 0; // always start in top-left corner of subimage
+					for (int r = ys; r <= ye; r++, sys++){ // iterate over rows last
+						sxs = 0;
+						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
 							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
+							if (index >= image_cols*image_rows) { /* do nothing */ } // segmentation fault
+							else{
+								subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
+								if (subindex >= sub_cols*sub_rows*num_sub) { return subindex; }  // segmentation fault
+								sub_images[subindex] = image[index]; // good value
 							}
-							sub_images[subIndex] = image[index]; 
-							
 						}
 					}
-				}		
 			}
-			//exceed pixel count on the right edge
-			else if(xe > image_cols-1){
-				sys = 0;
-				for (int r = ys; r <= ye; r++, sys++){
-					sxs = 0;
-					for (int c = xs; c <= xe; c++, sxs++){
-						if(c > image_cols-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
-							}
-							sub_images[subIndex] = 0.0;
-						}
-						else{
-							
-							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
-							}
-							sub_images[subIndex] = image[index]; 
-							
-						}
-					}
-				}
-			}
-			//exceed pixel count on the bottom edge
-			else if(ye > image_cols-1){
-				sys = 0;
-				for (int r = ys; r <= ye; r++, sys++){
-					sxs = 0;
-					for (int c = xs; c <= xe; c++, sxs++){
-						if(r > image_rows-1){
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;	
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
-							}
-							sub_images[subIndex] = 0.0;
-						}
-						else{
-							index = c+r*image_cols;
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
-							}
-							sub_images[subIndex] = image[index]; 
-						}
-					}
-				}
-			}
-			// all is good
-			else {
-				sys = 0;
-				for (int r = ys; r <= ye; r++, sys++){
-					sxs = 0;
-					for (int c = xs; c <= xe; c++, sxs++){
-						index = c+r*image_cols;
-						if (index >= image_cols*image_rows)
-						{
-							// do nothing
-						}
-						else{
-							subIndex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
-							if (subIndex >= sub_cols*sub_rows*num_sub)
-							{
-								error = subIndex;	
-								return error;
-							}
-							sub_images[subIndex] = image[index]; 
-						}
-						
-					}
-				}
-
-			}
-			count = count + 1;
+			count = count + 1; // increment subimage count
 			step22(&xs,&xe,sub_cols,overlap);
 		}
 		step22(&ys,&ye,sub_rows,overlap);
 	}
-	error = 0;
-	return error;	
+	return 0;
 }
