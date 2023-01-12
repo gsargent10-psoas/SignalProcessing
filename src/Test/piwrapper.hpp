@@ -25,3 +25,5 @@ extern "C" int getwidth();
 extern "C" int getheight();
 
 extern "C" int getdepth();
+
+extern "C" int getproducttype();

@@ -105,3 +105,8 @@ int getdepth()
 {
 	return reader.getNumFrames();
 }
+
+int getproducttype()
+{
+	return reader.getPIFileProductType();
+}

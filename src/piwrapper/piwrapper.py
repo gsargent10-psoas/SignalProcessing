@@ -140,6 +140,7 @@ class PIWrapper:
         self._readpidouble = self.lib.readpidouble
         self._readpifloat = self.lib.readpifloat
         self._closereader = self.lib.closereader
+        self._getproducttype = self.lib.getproducttype
         #print(self.lib)
         
         # bool openpiwriterdouble(const char *filename, int width, int height, int _PI_PRODUCT_TYPE, bool overwrite);
@@ -185,6 +186,10 @@ class PIWrapper:
         # int closereader();
         self._closereader.restype = ctypes.c_int
         self._closereader.argtypes = None
+
+        # int getproducttype();
+        self._getproducttype.restype = ctypes.c_int
+        self._getproducttype.argtypes = None
 
     # int openpiwriterdouble(const char *filename, int width, int height, int _PI_PRODUCT_TYPE, bool overwrite);
     def openpiwriterdouble(self,filename:str,height:int,width:int,_PI_PRODUCT_TYPE:int,overwrite:bool)->bool:
@@ -262,3 +267,7 @@ class PIWrapper:
     # int closereader();
     def closereader(self)->int:
         return self._closereader()
+
+    # int getproducttype();
+    def getproducttype(self)->int:
+        return self._getproducttype()
