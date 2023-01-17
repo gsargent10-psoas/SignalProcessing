@@ -14,7 +14,7 @@ void formImage(double* TestImage, int image_rows, int image_cols);
 
 int main()
 {
-	int image_y = 2048; int image_x = 2448; int sub_x = 64; int sub_y = 64; int overlap = 8;
+	int image_y = 2048; int image_x = 2448; int sub_x = 108; int sub_y = 64; int overlap = 8;
 	int error = -99;
 	double* TestImage; double* SubImages; double* StitchImage;
 
