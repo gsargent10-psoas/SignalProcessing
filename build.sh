@@ -13,7 +13,9 @@ echo -e $build_list
 
 # Get all nested directories that have a build.sh.
 count=1
-for d in $(find ./src -maxdepth 1 -type d)
+files=$(find ./src -maxdepth 1 -type d)
+#files=sort $files
+for d in $files
 do
     echo -e "\t\e[1;34m$count. $d"
     let count=count+1
@@ -22,14 +24,15 @@ done
 # Run all build.sh and get results.
 count=1
 succeed=0
-for d in $(find ./src -maxdepth 1 -type d)
+for d in $files
 do
     echo -e "\e[1;37m\nBuilding \e[1;34m$d\e[1;37m..."
     cd $d
     ./build.sh
     if [ $?==0 ]
     then
-        echo -e "\e[1;32m\n$d Build Succeeded!\e[1;37m"
+        #echo -e "\e[1;32m\n$d Build Succeeded!\e[1;37m"
+        echo
     else
         echo -e "\e[1;31m\n$d Build Failed!\e[1;37m"
         succeed=1
@@ -37,11 +40,25 @@ do
     cd $current_d
     let count=count+1
 done
+echo -e "\e[1;37m\nBuilding \e[1;34mTest\e[1;37m..."
+cd ./src/Test
+./build.sh
+if [ $?==0 ]
+then
+    #echo -e "\e[1;32m\n$d Build Succeeded!\e[1;37m"
+    echo
+else
+    echo -e "\e[1;31m\n$d Build Failed!\e[1;37m"
+    succeed=1
+fi
+cd $current_d
+
 
 # Print out results.
 if [ $succeed==0 ]
 then
-    echo -e "\e[1;32m\nAll Builds Succeeded!\e[1;37m"
+    #echo -e "\e[1;32m\nAll Builds Succeeded!\e[1;37m"
+    echo
 else
     echo -e "\e[1;31m\nBuild(s) Failed!\e[1;37m"
 fi

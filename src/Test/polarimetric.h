@@ -11,7 +11,7 @@ void computeintensity_float(float *s0,float *s1, float *s2, float *out_data, int
 /* Generate sub images from full size image. Assume image is 2-dimensional.
 status: 0 = succes, 1 = success, but number of subimages generated < num_sub, 2 = success, but number of subimages generated > num_sub,
 -1 overlap is too large, -2 subimage is too large */
-int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int overlap);
+int getNumberSubImages(int image_y, int image_x, int sub_y, int sub_x, int overlap);
     
 
 /* The stitching algroithim */
@@ -22,6 +22,6 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 /* Generate sub images from full size image. Assume image is 2-dimensional.
 status: 0 = succes, 1 = success, but number of subimages generated does not equal num_sub
 -1 overlap is too large, -2 subimage is too large */
-int formSubImage22_double(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub);
-int formSubImage22_float(float* image, int image_rows, int image_cols, float* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub);
+int formSubImage_double(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub);
+int formSubImage_float(float* image, int image_rows, int image_cols, float* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub);
 

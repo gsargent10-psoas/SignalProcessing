@@ -14,14 +14,14 @@ void formImage(double* TestImage, int image_rows, int image_cols);
 
 int main()
 {
-	int image_y = 2048; int image_x = 2448; int sub_x = 108; int sub_y = 64; int overlap = 8;
+	int image_y = 2048; int image_x = 2448; int sub_x = 108; int sub_y = 108; int overlap_factor = 1;
 	int error = -99;
 	double* TestImage; double* SubImages; double* StitchImage;
 
-	int sub_depth = getNumberSubImages22(image_y,image_x,sub_y,sub_x,overlap);
-	cout << sub_depth << endl;
-	cout << sub_x*sub_y*sub_depth << endl;
-	cout << image_y*image_x << endl;
+	int sub_depth = getNumberSubImages(image_y,image_x,sub_y,sub_x,overlap_factor);
+	//cout << sub_depth << endl;
+	//cout << sub_x*sub_y*sub_depth << endl;
+	//cout << image_y*image_x << endl;
 
 
 	TestImage = new double[image_x*image_y]; //rows * columns TestImage
@@ -43,13 +43,13 @@ int main()
 	formImage(TestImage, image_y, image_x);
 	
 	
-	error = formSubImage22_double(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth);
-	cout << endl << "formSubImage22 error: " << error <<endl;
+	error = formSubImage_double(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap_factor, sub_depth);
+	cout << "Form subimage error: " << error <<endl;
 	error = -99;
 	
 
-	error = stitchsubimages_double(StitchImage, image_y, image_x, SubImages, sub_y, sub_x, overlap, sub_depth); //Passing in the empty Stitch image
-	cout << endl << "Stitching error: " << error <<endl;
+	error = stitchsubimages_double(StitchImage, image_y, image_x, SubImages, sub_y, sub_x, overlap_factor, sub_depth); //Passing in the empty Stitch image
+	cout << "Stitching error: " << error <<endl;
 	error = -99;
 	
 	
@@ -67,8 +67,6 @@ int main()
 
 	*/
 
-	
-    cout << endl;
 	double check = 0.0;
 	for (int i = 0; i < image_x*image_y; i++){
 		//cout << StitchImage[i] << ", ";
@@ -83,8 +81,7 @@ int main()
 
 		}
 	} 
-	cout << endl;
-	cout << "check: " << check << endl;
+	cout << "Image difference check: " << check << endl;
 	
 
 	

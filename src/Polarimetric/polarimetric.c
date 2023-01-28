@@ -2,32 +2,16 @@
 #include<math.h>
 #include<stdlib.h>
 
+#define STEP 12
+
 /*** Internal Functions ***/
 
 /* Increment the step count for sub image generation and stitching for 2x2 pattern. */
-void step22(int *sp, int *ep, int width, int overlap)
+void step(int *sp, int *ep, int width, int overlap_factor)
 {
 	/* sp = starting pixel, ep = ending pixel, width = width of image, overlap = desired overlap */
-	*sp = *ep-(2*overlap)+1;
-	if(*sp % 2 != 0){ *sp = *sp + 1; } // need to always start on an even pixel (changed to +1 instead of -1)	
-	*ep = *sp + width - 1;
-}
-
-/* Increment the step count for sub image generation and stitching for 4x2 pattern. */
-void step42(int *sp, int *ep, int width, int overlap)
-{
-	/* sp = starting pixel, ep = ending pixel, width = width of image, overlap = desired overlap */
-	*sp = *ep-(2*overlap)+1;
-	if(*sp % 2 != 0){ *sp = *sp + 1; } // need to always start on an even pixel (changed to +1 instead of -1)	
-	*ep = *sp + width - 1;
-}
-
-/* Increment the step count for sub image generation and stitching for 3x2 pattern. */
-void step32(int *sp, int *ep, int width, int overlap)
-{
-	/* sp = starting pixel, ep = ending pixel, width = width of image, overlap = desired overlap */
-	*sp = *ep-(2*overlap)+1;
-	if(*sp % 2 != 0){ *sp = *sp + 1; } // need to always start on an even pixel (changed to +1 instead of -1)	
+	*sp = *ep-(2*STEP*overlap_factor)+1;
+	//if(*sp % 2 != 0){ *sp = *sp + 1; } // need to always start on an even pixel (changed to +1 instead of -1)	
 	*ep = *sp + width - 1;
 }
 
@@ -246,16 +230,15 @@ void computeintensity_float(float *s0,float *s1, float *s2, float *out_data, int
 }
 
 /* Return the number of sub images based on full image size, desired sub image size, and overlap. */
-int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int overlap)
+int getNumberSubImages(int image_y, int image_x, int sub_y, int sub_x, int overlap_factor)
 {
-	int x = (int)ceil(((double)image_x/(double)(sub_x-2*overlap)));
-	int y = (int)ceil(((double)image_y/(double)(sub_y-2*overlap)));
+	int x = (int)ceil(((double)image_x/(double)(sub_x-2*STEP*overlap_factor)));
+	int y = (int)ceil(((double)image_y/(double)(sub_y-2*STEP*overlap_factor)));
 	return x*y;
 }
 
 /* The stitching algroithim */
-int stitchsubimages_float(float* image, int image_rows, int image_cols, float* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub){
-	
+int stitchsubimages_float(float* image, int image_rows, int image_cols, float* sub_images, int sub_rows, int sub_cols, int overlap_factor, int num_sub){
 	int xs = 0; int xe = sub_cols -1;
 	int ys = 0; int ye = sub_rows -1;
 	
@@ -284,9 +267,9 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 			//top left corner 
 			else if (xs == 0 && ys == 0){
 				sys = 0;
-				for (int r = ys; r <= ye-overlap; r++, sys++){
+				for (int r = ys; r <= ye-STEP*overlap_factor; r++, sys++){
 					sxs = 0;
-					for (int c = xs; c <= xe-overlap; c++, sxs++){
+					for (int c = xs; c <= xe-STEP*overlap_factor; c++, sxs++){
 						index = c+r*image_cols;
 						//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 						subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
@@ -303,9 +286,9 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 			//top edge
 			else if (ys == 0 && xe <= image_cols-1){
 				sys = 0;
-				for (int r = ys; r <= ye-overlap; r++, sys++){
-					sxs = 0+overlap;
-					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
+				for (int r = ys; r <= ye-STEP*overlap_factor; r++, sys++){
+					sxs = 0+STEP*overlap_factor;
+					for (int c = xs+STEP*overlap_factor; c <= xe-STEP*overlap_factor; c++, sxs++){
 						index = c+r*image_cols;
 						//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 						subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
@@ -322,9 +305,9 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 			//top right corner
 			else if(ys == 0 && xe > image_cols-1){
 				sys = 0;
-				for (int r = ys; r <= ye-overlap; r++, sys++){
-					sxs = 0+overlap;
-					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
+				for (int r = ys; r <= ye-STEP*overlap_factor; r++, sys++){
+					sxs = 0+STEP*overlap_factor;
+					for (int c = xs+STEP*overlap_factor; c <= xe-STEP*overlap_factor; c++, sxs++){
 						if(c > image_cols-1){
 							//do nothing
 						}
@@ -344,10 +327,10 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 			}
 			//left edge
 			else if(xs == 0 && ye <= image_rows-1){
-				sys = 0+overlap;
-				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
+				sys = 0+STEP*overlap_factor;
+				for (int r = ys+STEP*overlap_factor; r <= ye-STEP*overlap_factor; r++, sys++){
 					sxs = 0;
-					for (int c = xs; c <= xe-overlap; c++, sxs++){
+					for (int c = xs; c <= xe-STEP*overlap_factor; c++, sxs++){
 						index = c+r*image_cols;
 						//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 						subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
@@ -362,10 +345,10 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 			}
 			//bottom left corner
 			else if(xs == 0 && ye > image_rows-1){
-				sys = 0+overlap;
-				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
+				sys = 0+STEP*overlap_factor;
+				for (int r = ys+STEP*overlap_factor; r <= ye-STEP*overlap_factor; r++, sys++){
 					sxs = 0;
-					for (int c = xs; c <= xe-overlap; c++, sxs++){
+					for (int c = xs; c <= xe-STEP*overlap_factor; c++, sxs++){
 						if(r > image_rows-1){
 							//do nothing
 						}
@@ -386,10 +369,10 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 			
 			//exceed pixel count on the bottom and right
 			else if(xe > image_cols-1 && ye > image_rows-1){
-				sys = 0+overlap;
-				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
-					sxs = 0+overlap;
-					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
+				sys = 0+STEP*overlap_factor;
+				for (int r = ys+STEP*overlap_factor; r <= ye-STEP*overlap_factor; r++, sys++){
+					sxs = 0+STEP*overlap_factor;
+					for (int c = xs+STEP*overlap_factor; c <= xe-STEP*overlap_factor; c++, sxs++){
 						if(c > image_cols-1 && r > image_rows-1){
 							//do nothing
 						}
@@ -416,10 +399,10 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 			
 			//exceed pixel count on the right edge
 			else if(xe > image_cols-1){
-				sys = 0+overlap;
-				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
-					sxs = 0+overlap;
-					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
+				sys = 0+STEP*overlap_factor;
+				for (int r = ys+STEP*overlap_factor; r <= ye-STEP*overlap_factor; r++, sys++){
+					sxs = 0+STEP*overlap_factor;
+					for (int c = xs+STEP*overlap_factor; c <= xe-STEP*overlap_factor; c++, sxs++){
 						if(c > image_cols-1){
 							//do nothing
 						}
@@ -440,10 +423,10 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 			}
 			//exceed pixel count on the bottom edge
 			else if(ye > image_cols-1){
-				sys = 0+overlap;
-				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
-					sxs = 0+overlap;
-					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
+				sys = 0+STEP*overlap_factor;
+				for (int r = ys+STEP*overlap_factor; r <= ye-STEP*overlap_factor; r++, sys++){
+					sxs = 0+STEP*overlap_factor;
+					for (int c = xs+STEP*overlap_factor; c <= xe-STEP*overlap_factor; c++, sxs++){
 						if(r > image_rows-1){
 							//do nothing
 						}
@@ -463,10 +446,10 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 			}	
 			// all is good
 			else {
-				sys = 0+overlap;
-				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
-					sxs = 0+overlap;
-					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
+				sys = 0+STEP*overlap_factor;
+				for (int r = ys+STEP*overlap_factor; r <= ye-STEP*overlap_factor; r++, sys++){
+					sxs = 0+STEP*overlap_factor;
+					for (int c = xs+STEP*overlap_factor; c <= xe-STEP*overlap_factor; c++, sxs++){
 						index = c+r*image_cols;
 						if (index >= image_cols*image_rows)
 						{
@@ -487,17 +470,16 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 
 			}
 			count = count + 1;
-			step22(&xs,&xe,sub_cols,overlap);
+			step(&xs,&xe,sub_cols,overlap_factor);
 		}
-		step22(&ys,&ye,sub_rows,overlap);
+		step(&ys,&ye,sub_rows,overlap_factor);
 	}
 	error = 0;	
 	return error;
 }
 /* The stitching algroithim */
-int stitchsubimages_double(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub){
-	
-	int xs = 0; int xe = sub_cols -1;
+int stitchsubimages_double(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap_factor, int num_sub){
+		int xs = 0; int xe = sub_cols -1;
 	int ys = 0; int ye = sub_rows -1;
 	
 	int sxs = 0; 
@@ -525,9 +507,9 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 			//top left corner 
 			else if (xs == 0 && ys == 0){
 				sys = 0;
-				for (int r = ys; r <= ye-overlap; r++, sys++){
+				for (int r = ys; r <= ye-STEP*overlap_factor; r++, sys++){
 					sxs = 0;
-					for (int c = xs; c <= xe-overlap; c++, sxs++){
+					for (int c = xs; c <= xe-STEP*overlap_factor; c++, sxs++){
 						index = c+r*image_cols;
 						//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 						subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
@@ -544,9 +526,9 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 			//top edge
 			else if (ys == 0 && xe <= image_cols-1){
 				sys = 0;
-				for (int r = ys; r <= ye-overlap; r++, sys++){
-					sxs = 0+overlap;
-					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
+				for (int r = ys; r <= ye-STEP*overlap_factor; r++, sys++){
+					sxs = 0+STEP*overlap_factor;
+					for (int c = xs+STEP*overlap_factor; c <= xe-STEP*overlap_factor; c++, sxs++){
 						index = c+r*image_cols;
 						//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 						subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
@@ -563,9 +545,9 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 			//top right corner
 			else if(ys == 0 && xe > image_cols-1){
 				sys = 0;
-				for (int r = ys; r <= ye-overlap; r++, sys++){
-					sxs = 0+overlap;
-					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
+				for (int r = ys; r <= ye-STEP*overlap_factor; r++, sys++){
+					sxs = 0+STEP*overlap_factor;
+					for (int c = xs+STEP*overlap_factor; c <= xe-STEP*overlap_factor; c++, sxs++){
 						if(c > image_cols-1){
 							//do nothing
 						}
@@ -585,10 +567,10 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 			}
 			//left edge
 			else if(xs == 0 && ye <= image_rows-1){
-				sys = 0+overlap;
-				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
+				sys = 0+STEP*overlap_factor;
+				for (int r = ys+STEP*overlap_factor; r <= ye-STEP*overlap_factor; r++, sys++){
 					sxs = 0;
-					for (int c = xs; c <= xe-overlap; c++, sxs++){
+					for (int c = xs; c <= xe-STEP*overlap_factor; c++, sxs++){
 						index = c+r*image_cols;
 						//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 						subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
@@ -603,10 +585,10 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 			}
 			//bottom left corner
 			else if(xs == 0 && ye > image_rows-1){
-				sys = 0+overlap;
-				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
+				sys = 0+STEP*overlap_factor;
+				for (int r = ys+STEP*overlap_factor; r <= ye-STEP*overlap_factor; r++, sys++){
 					sxs = 0;
-					for (int c = xs; c <= xe-overlap; c++, sxs++){
+					for (int c = xs; c <= xe-STEP*overlap_factor; c++, sxs++){
 						if(r > image_rows-1){
 							//do nothing
 						}
@@ -627,10 +609,10 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 			
 			//exceed pixel count on the bottom and right
 			else if(xe > image_cols-1 && ye > image_rows-1){
-				sys = 0+overlap;
-				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
-					sxs = 0+overlap;
-					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
+				sys = 0+STEP*overlap_factor;
+				for (int r = ys+STEP*overlap_factor; r <= ye-STEP*overlap_factor; r++, sys++){
+					sxs = 0+STEP*overlap_factor;
+					for (int c = xs+STEP*overlap_factor; c <= xe-STEP*overlap_factor; c++, sxs++){
 						if(c > image_cols-1 && r > image_rows-1){
 							//do nothing
 						}
@@ -657,10 +639,10 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 			
 			//exceed pixel count on the right edge
 			else if(xe > image_cols-1){
-				sys = 0+overlap;
-				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
-					sxs = 0+overlap;
-					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
+				sys = 0+STEP*overlap_factor;
+				for (int r = ys+STEP*overlap_factor; r <= ye-STEP*overlap_factor; r++, sys++){
+					sxs = 0+STEP*overlap_factor;
+					for (int c = xs+STEP*overlap_factor; c <= xe-STEP*overlap_factor; c++, sxs++){
 						if(c > image_cols-1){
 							//do nothing
 						}
@@ -681,10 +663,10 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 			}
 			//exceed pixel count on the bottom edge
 			else if(ye > image_cols-1){
-				sys = 0+overlap;
-				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
-					sxs = 0+overlap;
-					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
+				sys = 0+STEP*overlap_factor;
+				for (int r = ys+STEP*overlap_factor; r <= ye-STEP*overlap_factor; r++, sys++){
+					sxs = 0+STEP*overlap_factor;
+					for (int c = xs+STEP*overlap_factor; c <= xe-STEP*overlap_factor; c++, sxs++){
 						if(r > image_rows-1){
 							//do nothing
 						}
@@ -704,10 +686,10 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 			}	
 			// all is good
 			else {
-				sys = 0+overlap;
-				for (int r = ys+overlap; r <= ye-overlap; r++, sys++){
-					sxs = 0+overlap;
-					for (int c = xs+overlap; c <= xe-overlap; c++, sxs++){
+				sys = 0+STEP*overlap_factor;
+				for (int r = ys+STEP*overlap_factor; r <= ye-STEP*overlap_factor; r++, sys++){
+					sxs = 0+STEP*overlap_factor;
+					for (int c = xs+STEP*overlap_factor; c <= xe-STEP*overlap_factor; c++, sxs++){
 						index = c+r*image_cols;
 						if (index >= image_cols*image_rows)
 						{
@@ -728,9 +710,9 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 
 			}
 			count = count + 1;
-			step22(&xs,&xe,sub_cols,overlap);
+			step(&xs,&xe,sub_cols,overlap_factor);
 		}
-		step22(&ys,&ye,sub_rows,overlap);
+		step(&ys,&ye,sub_rows,overlap_factor);
 	}
 	error = 0;	
 	return error;
@@ -749,7 +731,7 @@ int casenumber(int image_rows, int image_cols,int sub_rows, int sub_cols, int nu
 /* Generate sub images from full size image. Assume image is 2-dimensional.
 status: 0 = succes, 1 = success, but more subimages available than allocated, 2 = starting pixel exceeds image dimensions,
 -1 overlap is too large, -2 subimage is too large */
-int formSubImage22_float(float* image, int image_rows, int image_cols, float* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub)
+int formSubImage_float(float* image, int image_rows, int image_cols, float* sub_images, int sub_rows, int sub_cols, int overlap_factor, int num_sub)
 {
 	int xs = 0; // starting column image pixel 
 	int xe = sub_cols -1; // ending column pixel
@@ -865,16 +847,16 @@ int formSubImage22_float(float* image, int image_rows, int image_cols, float* su
 					}
 			}
 			count = count + 1; // increment subimage count
-			step22(&xs,&xe,sub_cols,overlap);
+			step(&xs,&xe,sub_cols,overlap_factor);
 		}
-		step22(&ys,&ye,sub_rows,overlap);
+		step(&ys,&ye,sub_rows,overlap_factor);
 	}
 	return 0;	
 }
 /* Generate sub images from full size image. Assume image is 2-dimensional.
 status: 0 = succes, 1 = success, but number of subimages generated < num_sub, 2 = success, but number of subimages generated > num_sub,
 -1 overlap is too large, -2 subimage is too large */
-int formSubImage22_double(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub)
+int formSubImage_double(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap_factor, int num_sub)
 {
 	int xs = 0; // starting column image pixel 
 	int xe = sub_cols -1; // ending column pixel
@@ -990,9 +972,9 @@ int formSubImage22_double(double* image, int image_rows, int image_cols, double*
 					}
 			}
 			count = count + 1; // increment subimage count
-			step22(&xs,&xe,sub_cols,overlap);
+			step(&xs,&xe,sub_cols,overlap_factor);
 		}
-		step22(&ys,&ye,sub_rows,overlap);
+		step(&ys,&ye,sub_rows,overlap_factor);
 	}
 	return 0;
 }
