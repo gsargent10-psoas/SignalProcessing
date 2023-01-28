@@ -11,7 +11,7 @@ void step(int *sp, int *ep, int width, int overlap_factor)
 {
 	/* sp = starting pixel, ep = ending pixel, width = width of image, overlap = desired overlap */
 	*sp = *ep-(2*STEP*overlap_factor)+1;
-	//if(*sp % 2 != 0){ *sp = *sp + 1; } // need to always start on an even pixel (changed to +1 instead of -1)	
+	if(*sp % 2 != 0){ *sp = *sp + 1; } // need to always start on an even pixel (changed to +1 instead of -1)	
 	*ep = *sp + width - 1;
 }
 
