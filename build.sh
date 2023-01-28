@@ -21,26 +21,25 @@ done
 
 # Run all build.sh and get results.
 count=1
-retn_count=0
+succeed=0
 for d in $(find ./src -maxdepth 1 -type d)
 do
     echo -e "\e[1;37m\nBuilding \e[1;34m$d\e[1;37m..."
     cd $d
     ./build.sh
-    retn=$?
-    if [ $retn==0 ]
+    if [ $?==0 ]
     then
         echo -e "\e[1;32m\n$d Build Succeeded!\e[1;37m"
     else
         echo -e "\e[1;31m\n$d Build Failed!\e[1;37m"
+        succeed=1
     fi
-    let retn_count=retn_count+$retn
     cd $current_d
     let count=count+1
 done
 
 # Print out results.
-if [ $retn_count==0 ]
+if [ $succeed==0 ]
 then
     echo -e "\e[1;32m\nAll Builds Succeeded!\e[1;37m"
 else

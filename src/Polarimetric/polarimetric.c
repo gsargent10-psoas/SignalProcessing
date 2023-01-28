@@ -4,8 +4,26 @@
 
 /*** Internal Functions ***/
 
-/* Increment the step count for sub image generation and stitching. */
+/* Increment the step count for sub image generation and stitching for 2x2 pattern. */
 void step22(int *sp, int *ep, int width, int overlap)
+{
+	/* sp = starting pixel, ep = ending pixel, width = width of image, overlap = desired overlap */
+	*sp = *ep-(2*overlap)+1;
+	if(*sp % 2 != 0){ *sp = *sp + 1; } // need to always start on an even pixel (changed to +1 instead of -1)	
+	*ep = *sp + width - 1;
+}
+
+/* Increment the step count for sub image generation and stitching for 4x2 pattern. */
+void step42(int *sp, int *ep, int width, int overlap)
+{
+	/* sp = starting pixel, ep = ending pixel, width = width of image, overlap = desired overlap */
+	*sp = *ep-(2*overlap)+1;
+	if(*sp % 2 != 0){ *sp = *sp + 1; } // need to always start on an even pixel (changed to +1 instead of -1)	
+	*ep = *sp + width - 1;
+}
+
+/* Increment the step count for sub image generation and stitching for 3x2 pattern. */
+void step32(int *sp, int *ep, int width, int overlap)
 {
 	/* sp = starting pixel, ep = ending pixel, width = width of image, overlap = desired overlap */
 	*sp = *ep-(2*overlap)+1;
