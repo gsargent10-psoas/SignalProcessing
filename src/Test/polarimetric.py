@@ -76,7 +76,7 @@ class Polarimetric:
         np.ascontiguousarray(s2, dtype=np.float32),np.ascontiguousarray(data, dtype=np.float32),w,h,angle)
 
     # int getNumberSubImages22(int image_y, int image_x, int sub_y, int sub_x, int overlap);
-    def getNumberSubImages22(self,image_y:int,image_x:int,sub_y:int,sub_x:int,overlap:int)->int:
+    def getNumberSubImages(self,image_y:int,image_x:int,sub_y:int,sub_x:int,overlap:int)->int:
         return self._getNumberSubImages(image_y,image_x,sub_y,sub_x,overlap)
 
     #int stitchsubimages(double* image, int image_rows, int image_cols, double* sub_images, int sub_rows, int sub_cols, int overlap, int num_sub);
