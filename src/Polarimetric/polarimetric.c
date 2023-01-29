@@ -1,17 +1,18 @@
 #include "polarimetric.h"
 #include<math.h>
 #include<stdlib.h>
+#include<stdio.h>
 
 #define STEP 12
 
 /*** Internal Functions ***/
 
 /* Increment the step count for sub image generation and stitching for 2x2 pattern. */
-void step22(int *sp, int *ep, int width, int overlap_factor)
+void stepgeneral(int *sp, int *ep, int width, int overlap_factor)
 {
 	/* sp = starting pixel, ep = ending pixel, width = width of image, overlap = desired overlap */
 	*sp = *ep-(2*STEP*overlap_factor)+1;
-	//if(*sp % 2 != 0){ *sp = *sp + 1; } // need to always start on an even pixel (changed to +1 instead of -1)	
+	if(*sp % STEP != 0){ printf("Starting pixel: %d\n",*sp); } // need to always start on an even pixel (changed to +1 instead of -1)	
 	*ep = *sp + width - 1;
 }
 
@@ -470,9 +471,9 @@ int stitchsubimages_float(float* image, int image_rows, int image_cols, float* s
 
 			}
 			count = count + 1;
-			step22(&xs,&xe,sub_cols,overlap_factor);
+			stepgeneral(&xs,&xe,sub_cols,overlap_factor);
 		}
-		step22(&ys,&ye,sub_rows,overlap_factor);
+		stepgeneral(&ys,&ye,sub_rows,overlap_factor);
 	}
 	error = 0;	
 	return error;
@@ -710,9 +711,9 @@ int stitchsubimages_double(double* image, int image_rows, int image_cols, double
 
 			}
 			count = count + 1;
-			step22(&xs,&xe,sub_cols,overlap_factor);
+			stepgeneral(&xs,&xe,sub_cols,overlap_factor);
 		}
-		step22(&ys,&ye,sub_rows,overlap_factor);
+		stepgeneral(&ys,&ye,sub_rows,overlap_factor);
 	}
 	error = 0;	
 	return error;
@@ -756,7 +757,7 @@ int formSubImage_float(float* image, int image_rows, int image_cols, float* sub_
 				case 2: // Case 2, starting pixel exceeds image dimensions
 					return 2;
 				case 3: // Case 3, exceed pixel count on the bottom and right
-				/*
+				
 					sys = 0; // always start in top-left corner of subimage
 					for (int r = ys; r <= ye; r++, sys++){ // iterate over rows last
 						sxs = 0; // start on far left
@@ -788,10 +789,10 @@ int formSubImage_float(float* image, int image_rows, int image_cols, float* sub_
 							}
 						}
 					}
-					*/
+					
 					break;
 				case 4: // exceed pixel count on the right edge
-				/*
+				
 					sys = 0; // always start in top-left corner of subimage
 					for (int r = ys; r <= ye; r++, sys++){ // iterate over rows last
 						sxs = 0; 
@@ -811,10 +812,10 @@ int formSubImage_float(float* image, int image_rows, int image_cols, float* sub_
 							}
 						}
 					}
-					*/
+					
 					break;
 				case 5: // exceed pixel count on the bottom edge
-				/*
+				
 					sys = 0; // always start in top-left corner of subimage
 					for (int r = ys; r <= ye; r++, sys++){ // iterate over rows last
 						sxs = 0;
@@ -834,16 +835,16 @@ int formSubImage_float(float* image, int image_rows, int image_cols, float* sub_
 							}
 						}
 					}
-					*/
+					
 					break;
 				default: // all is good
 					sys = 0; // always start in top-left corner of subimage
-					/*
+					
 					for (int r = ys; r <= ye; r++, sys++){ // iterate over rows last
 						sxs = 0;
 						for (int c = xs; c <= xe; c++, sxs++){ // iterate over columns first
 							index = c+r*image_cols;
-							if (index >= image_cols*image_rows) { return index;  } // segmentation fault
+							if (index >= image_cols*image_rows) {  } // segmentation fault (NEED TO FIX)
 							else{
 								//subindex = sxs+sys*sub_cols+count*sub_cols*sub_rows;
 								subindex = sys*sub_rows*num_sub+sxs*num_sub+count;
@@ -852,12 +853,11 @@ int formSubImage_float(float* image, int image_rows, int image_cols, float* sub_
 							}
 						}
 					}
-					*/
 			}
 			count = count + 1; // increment subimage count
-			step22(&xs,&xe,sub_cols,overlap_factor);
+			stepgeneral(&xs,&xe,sub_cols,overlap_factor);
 		}
-		step22(&ys,&ye,sub_rows,overlap_factor);
+		stepgeneral(&ys,&ye,sub_rows,overlap_factor);
 	}
 	
 	return 0;	
@@ -981,9 +981,9 @@ int formSubImage_double(double* image, int image_rows, int image_cols, double* s
 					}
 			}
 			count = count + 1; // increment subimage count
-			step22(&xs,&xe,sub_cols,overlap_factor);
+			stepgeneral(&xs,&xe,sub_cols,overlap_factor);
 		}
-		step22(&ys,&ye,sub_rows,overlap_factor);
+		stepgeneral(&ys,&ye,sub_rows,overlap_factor);
 	}
 	return 0;
 }

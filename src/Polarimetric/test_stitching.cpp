@@ -13,7 +13,7 @@ void formImage(float* TestImage, int image_rows, int image_cols);
 
 int main()
 {
-	int image_y = 2048; int image_x = 2448; int sub_x = 256; int sub_y = 256; int overlap_factor = 2;
+	int image_y = 2048; int image_x = 2448; int sub_x = 192; int sub_y = 192; int overlap_factor = 2;
 	int error = -99;
 	float* TestImage; float* SubImages; float* StitchImage;
 
