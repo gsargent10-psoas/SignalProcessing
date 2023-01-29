@@ -1,4 +1,3 @@
-#include "piwrapper.hpp"
 extern "C"
 {
 #include "polarimetric.h"
@@ -14,17 +13,14 @@ void formImage(float* TestImage, int image_rows, int image_cols);
 
 int main()
 {
-	int image_y = 2048; int image_x = 2448; int sub_x = 64; int sub_y = 64; int overlap_factor = 1;
+	int image_y = 2048; int image_x = 2448; int sub_x = 256; int sub_y = 256; int overlap_factor = 2;
 	int error = -99;
 	float* TestImage; float* SubImages; float* StitchImage;
 
 	int sub_depth = getNumberSubImages(image_y,image_x,sub_y,sub_x,overlap_factor);
-	cout << sub_depth << endl;
-	//cout << sub_x*sub_y*sub_depth << endl;
-	//cout << image_y*image_x << endl;
+	cout << "Number of subimages: " << sub_depth << endl;
 
-
-	TestImage = new float[image_x*image_y]; //rows * columns TestImage
+	TestImage = new float[image_x*image_y];
 	for (int i = 0; i < image_y*image_x; i++){
 		TestImage[i] = 0.0;
 	}
