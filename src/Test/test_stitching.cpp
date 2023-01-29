@@ -10,31 +10,31 @@ extern "C"
 
 using namespace std;
 
-void formImage(double* TestImage, int image_rows, int image_cols);
+void formImage(float* TestImage, int image_rows, int image_cols);
 
 int main()
 {
 	int image_y = 2048; int image_x = 2448; int sub_x = 64; int sub_y = 64; int overlap_factor = 1;
 	int error = -99;
-	double* TestImage; double* SubImages; double* StitchImage;
+	float* TestImage; float* SubImages; float* StitchImage;
 
 	int sub_depth = getNumberSubImages(image_y,image_x,sub_y,sub_x,overlap_factor);
-	//cout << sub_depth << endl;
+	cout << sub_depth << endl;
 	//cout << sub_x*sub_y*sub_depth << endl;
 	//cout << image_y*image_x << endl;
 
 
-	TestImage = new double[image_x*image_y]; //rows * columns TestImage
+	TestImage = new float[image_x*image_y]; //rows * columns TestImage
 	for (int i = 0; i < image_y*image_x; i++){
 		TestImage[i] = 0.0;
 	}
 
-	SubImages = new double[sub_x*sub_y*sub_depth];
+	SubImages = new float[sub_x*sub_y*sub_depth];
 	for (int i = 0; i < sub_x*sub_y*sub_depth; i++){
 			SubImages[i] = 0.0;
 	}
 
-	StitchImage = new double[image_x*image_y];
+	StitchImage = new float[image_x*image_y];
 	for (int i = 0; i < image_y*image_x; i++){
 			StitchImage[i] = 0.0;
 	}
@@ -43,12 +43,12 @@ int main()
 	formImage(TestImage, image_y, image_x);
 	
 	
-	error = formSubImage_double(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap_factor, sub_depth);
+	error = formSubImage_float(TestImage, image_y, image_x, SubImages, sub_y, sub_x, overlap_factor, sub_depth);
 	cout << "Form subimage error: " << error <<endl;
 	error = -99;
 	
 
-	error = stitchsubimages_double(StitchImage, image_y, image_x, SubImages, sub_y, sub_x, overlap_factor, sub_depth); //Passing in the empty Stitch image
+	error = stitchsubimages_float(StitchImage, image_y, image_x, SubImages, sub_y, sub_x, overlap_factor, sub_depth); //Passing in the empty Stitch image
 	cout << "Stitching error: " << error <<endl;
 	error = -99;
 	
@@ -67,7 +67,7 @@ int main()
 
 	*/
 
-	double check = 0.0;
+	float check = 0.0;
 	for (int i = 0; i < image_x*image_y; i++){
 		//cout << StitchImage[i] << ", ";
 		check = check + abs((int)TestImage[i] - (int)StitchImage[i]);
@@ -87,7 +87,7 @@ int main()
 	
 /*
 	string filename = "./test.pi";
-	double data[4] = {1.0, 2.0, 3.0, 4.0};
+	float data[4] = {1.0, 2.0, 3.0, 4.0};
 	bool ret = openpiwriter((char*) filename.c_str(),2,2,4,true);
 	cout << "openpiwrite() return: " << ret << endl;
 	int ret2 = writepi(&data[0],1);
@@ -116,7 +116,7 @@ int main()
 	return 0;
 	
 }
-	void formImage(double* TestImage, int image_rows, int image_cols){ 
+	void formImage(float* TestImage, int image_rows, int image_cols){ 
 
 	//generating a test Image 
 	for (int i = 0; i < image_rows*image_cols; i++){
