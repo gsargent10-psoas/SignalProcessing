@@ -12,7 +12,10 @@ void stepgeneral(int *sp, int *ep, int width, int overlap_factor)
 {
 	/* sp = starting pixel, ep = ending pixel, width = width of image, overlap = desired overlap */
 	*sp = *ep-(2*STEP*overlap_factor)+1;
-	if(*sp % STEP != 0){ printf("Starting pixel: %d\n",*sp); } // need to always start on an even pixel (changed to +1 instead of -1)	
+	if(*sp % STEP != 0){
+		*sp = *sp - (*sp % STEP) + STEP;
+		if(*sp % STEP != 0){ printf("Error, starting pixel not divisible by %d: %d\n",STEP,*sp); }
+	} 
 	*ep = *sp + width - 1;
 }
 
