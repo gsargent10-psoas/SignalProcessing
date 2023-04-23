@@ -60,8 +60,8 @@ if __name__ == '__main__':
     image_y=2048 # 2048
     image_x=2448 # 2448
     dtype=np.float32
-    sub_y=48
-    sub_x=48
+    sub_y=96
+    sub_x=96
     overlap_factor=0
     plib = Polarimetric()
 
@@ -70,6 +70,7 @@ if __name__ == '__main__':
     image22b = np.zeros([image_y,image_x],dtype=dtype)
     image32 = np.zeros([image_y,image_x],dtype=dtype)
     image42 = np.zeros([image_y,image_x],dtype=dtype)
+    imagerand = np.random.rand(image_y,image_x).astype(np.float32)*100
     formugrid22a(image22a)
     formugrid22b(image22b)
     formugrid32(image32)
@@ -174,3 +175,20 @@ if __name__ == '__main__':
 
     stitched_check = np.sum(np.abs(image42-stitched_image))
     print("Stitching check (ugrid42):",stitched_check)
+    print()
+
+    # Test imagerand
+    error=-99
+    error = plib.formSubImage(imagerand, sub_images,overlap_factor)
+    print("formSubImage (imagerand) error:",error)
+    for r in range(0,10):
+        for c in range(0,10):
+            print(sub_images[r,c,5],end=",")
+        print()
+
+    error=-99
+    error = plib.stitchsubimages(stitched_image,sub_images,overlap_factor)
+    print("stitchsubimages (imagerand) error:",error)
+
+    stitched_check = np.sum(np.abs(imagerand-stitched_image))
+    print("Stitching check (imagerand):",stitched_check)
