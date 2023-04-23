@@ -111,6 +111,7 @@ if __name__ == '__main__':
     print("Stitching check (ugrid22a):",stitched_check)
     print()
 
+    # Test ugrid22b
     error=-99
     error = plib.formSubImage(image22b, sub_images,overlap_factor)
     print("formSubImage (ugrid22b) error:",error)
