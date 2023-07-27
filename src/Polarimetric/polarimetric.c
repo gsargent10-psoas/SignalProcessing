@@ -30,6 +30,7 @@ int formugrid_double(double *s0, double *s1, double *s2, double *out_data, int w
 
 	double a22a[4] = {0.0,45.0,135.0,90.0};
 	double a22b[4] = {22.5,67.5,112.5,157.5};
+	double a22c[4] = {90.0,45.0,0.0,135.0};
 	double a32[6] = {0.0,120.0,60.0,90.0,30.0,150.0};
 	double a42[8] = {0.0,45.0,90.0,135.0,90.0,135.0,0.0,45.0};
 	for(int k=0;k<4;k++)
@@ -107,6 +108,17 @@ int formugrid_double(double *s0, double *s1, double *s2, double *out_data, int w
 					out_data[indx] = 0.5*(s0[indx]+cos(a42[3])*s1[indx] + sin(a42[3])*s2[indx]); 	
 				if(r%2==0 && c%4==0) // 0.0, top-left
 					out_data[indx] = 0.5*(s0[indx]+cos(a42[0])*s1[indx] + sin(a42[0])*s2[indx]); 	
+			}
+			else if(modulation==4) // 2x2c, top-left=135, top-right=0, bottom-left=45, bottom-right=90
+			{
+				if(r%2==1 && c%2==1) // 0, bottom-right
+					out_data[indx] = 0.5*(s0[indx]+cos(a22c[0])*s1[indx] + sin(a22c[0])*s2[indx]); 	
+				if(r%2==1 && c%2==0) // 45, bottom-left
+					out_data[indx] = 0.5*(s0[indx]+cos(a22c[1])*s1[indx] + sin(a22c[1])*s2[indx]); 	
+				if(r%2==0 && c%2==1) // 135, top-right
+					out_data[indx] = 0.5*(s0[indx]+cos(a22c[2])*s1[indx] + sin(a22c[2])*s2[indx]); 	
+				if(r%2==0 && c%2==0) // 90, top-left
+					out_data[indx] = 0.5*(s0[indx]+cos(a22c[3])*s1[indx] + sin(a22c[3])*s2[indx]); 	
 			}
 			else
 			{
@@ -123,10 +135,11 @@ int formugrid_float(float *s0, float *s1, float *s2, float *out_data, int width,
 	if (modulation > 3 || modulation < 0)
 		return -1;
 
-	double a22a[4] = {0.0,45.0,135.0,90.0};
-	double a22b[4] = {22.5,67.5,112.5,157.5};
-	double a32[6] = {0.0,120.0,60.0,90.0,30.0,150.0};
-	double a42[8] = {0.0,45.0,90.0,135.0,90.0,135.0,0.0,45.0};
+	float a22a[4] = {0.0,45.0,135.0,90.0};
+	float a22b[4] = {22.5,67.5,112.5,157.5};
+	float a22c[4] = {90.0,45.0,0.0,135.0};
+	float a32[6] = {0.0,120.0,60.0,90.0,30.0,150.0};
+	float a42[8] = {0.0,45.0,90.0,135.0,90.0,135.0,0.0,45.0};
 	for(int k=0;k<4;k++)
 	{
 		a22a[k]=2.0*a22a[k]*(M_PI/180.0);
@@ -202,6 +215,17 @@ int formugrid_float(float *s0, float *s1, float *s2, float *out_data, int width,
 					out_data[indx] = 0.5*(s0[indx]+cos(a42[3])*s1[indx] + sin(a42[3])*s2[indx]); 	
 				if(r%2==0 && c%4==0) // 0.0, top-left
 					out_data[indx] = 0.5*(s0[indx]+cos(a42[0])*s1[indx] + sin(a42[0])*s2[indx]); 	
+			}
+			else if(modulation==4) // 2x2c, top-left=135, top-right=0, bottom-left=45, bottom-right=90
+			{
+				if(r%2==1 && c%2==1) // 0, bottom-right
+					out_data[indx] = 0.5*(s0[indx]+cos(a22c[0])*s1[indx] + sin(a22c[0])*s2[indx]); 	
+				if(r%2==1 && c%2==0) // 45, bottom-left
+					out_data[indx] = 0.5*(s0[indx]+cos(a22c[1])*s1[indx] + sin(a22c[1])*s2[indx]); 	
+				if(r%2==0 && c%2==1) // 135, top-right
+					out_data[indx] = 0.5*(s0[indx]+cos(a22c[2])*s1[indx] + sin(a22c[2])*s2[indx]); 	
+				if(r%2==0 && c%2==0) // 90, top-left
+					out_data[indx] = 0.5*(s0[indx]+cos(a22c[3])*s1[indx] + sin(a22c[3])*s2[indx]); 	
 			}
 			else
 			{
